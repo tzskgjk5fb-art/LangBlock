@@ -1,0 +1,74 @@
+# LangBlock
+
+A free browser extension that hides YouTube videos spoken in languages you choose, in search results, the home page and feeds, the "Up next" list and channel pages.
+
+## How detection works
+
+Each video card goes through two checks. Both run in your browser and need no API key or account.
+
+1. **Title check (instant, offline).** The title, channel name and snippet are run through the browser's built-in language detector (`i18n.detectLanguage`) and a writing-system check (for example Devanagari for Hindi). Clear matches are hidden immediately without any network request.
+2. **Spoken-language check.** For videos that pass the title check, LangBlock loads the video's YouTube watch page once and reads two fields from the player data YouTube embeds in it (`ytInitialPlayerResponse`):
+   - the language of the **auto-generated caption track** (`captionTracks[].kind == "asr"`), which is YouTube's own speech recognition naming the spoken language;
+   - the **original audio track** (`audioTrack.id` like `hi.4`, or a display name containing "original") on videos with multiple audio tracks.
+
+   If neither exists, the full description is run through the language detector. The page is read as a stream and the download stops as soon as the player data is complete. Only cards near the screen are checked, two at a time, and the results are cached on the device (60 days, or 3 days when nothing was found).
+
+The second check matters because YouTube auto-translates titles and auto-dubs audio, so a Hindi video can show an English title.
+
+### Why this approach
+- **Free:** no YouTube Data API key or quota, and no third-party service.
+- **Stable:** the caption-track and audio-track fields have kept the same shape for over a decade and are relied on by many tools. Card detection uses a list of known YouTube elements, plus a fallback that finds any card linking to a single video. A YouTube layout change therefore degrades gracefully instead of breaking.
+- **Private:** nothing leaves the device except normal requests to YouTube.
+
+### Known limits
+- Videos without auto-captions or audio-track info (music, very short or brand-new videos) fall back to title and description.
+- Romanized text (Hindi written in Latin letters) is mostly caught by the spoken-language check, not the title check.
+- Languages that share a script (Hindi, Marathi, Nepali) are separated by the browser's detector; without one (Safari), blocking one may hide the others in title matches.
+
+## Browser support
+
+| Browser | Status |
+| --- | --- |
+| Chrome, Edge, Brave, Opera, Vivaldi (desktop) | `dist/langblock-chrome-*.zip` |
+| Firefox desktop 128+ and Firefox for Android 128+ | `dist/langblock-firefox-*.zip` |
+| Edge for Android | Edge for Android only offers a small, curated set of extensions, so availability there isn't guaranteed |
+| Safari (macOS, iOS, iPadOS) | Convert with `xcrun safari-web-extension-converter dist/chrome` in Xcode. Safari has no `i18n.detectLanguage`, so the title check uses the writing-system check only; the spoken-language check works as normal. |
+| Chrome for Android | Google doesn't support extensions there |
+
+## Permissions
+
+| Permission | Why |
+| --- | --- |
+| Site access to `www.youtube.com` and `m.youtube.com` (content script) | Find video cards, hide blocked ones, and read a video's language fields from its YouTube page. No other sites. |
+| `storage` | Save settings and the on-device cache of checked videos. |
+
+Nothing else: no `tabs`, `history`, `cookies`, `webRequest`, or `<all_urls>`.
+
+## Security
+- Manifest V3 with a strict extension page CSP: `default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'`.
+- No remote code, no `eval`, no `innerHTML` (enforced by ESLint rules); all UI is built with DOM APIs and `textContent`.
+- All stored settings and cache entries are validated before use.
+- The popup's message handler only answers messages from LangBlock itself.
+- No analytics and no data collection. Firefox's `data_collection_permissions` is set to `none`.
+
+## Donation link
+`DONATION_URL` in `src/config.js` points to https://ko-fi.com/josh3579. It must be an `https://` URL. The link shows as a small "♥ Support LangBlock" in the settings page and popup, and stays hidden while the value is empty.
+
+## Development
+
+```sh
+npm test            # unit tests (Node 20+)
+npm run test:e2e    # builds, then loads the extension in Chromium against mock YouTube pages (needs Playwright)
+npm run lint        # ESLint, including security rules
+npm run build       # dist/langblock-chrome-<v>.zip and dist/langblock-firefox-<v>.zip
+npx web-ext lint --source-dir dist/firefox
+```
+
+To try it unpacked:
+- Chrome or Edge: open `chrome://extensions`, turn on Developer mode, click "Load unpacked" and pick `dist/chrome`.
+- Firefox: open `about:debugging#/runtime/this-firefox`, click "Load Temporary Add-on" and pick `dist/firefox/manifest.json`.
+
+Store listing text, permission explanations and the privacy policy are in [`docs/`](docs/).
+
+## License
+MIT

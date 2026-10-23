@@ -1,0 +1,18 @@
+{
+  "extName": {
+    "message": "LangBlock: YouTube Language Filter",
+    "description": "Extension name shown in the browser and stores."
+  },
+  "extShortName": {
+    "message": "LangBlock",
+    "description": "Short name."
+  },
+  "extDescription": {
+    "message": "Hide YouTube videos spoken in languages you choose, in search and recommendations. Free, private, no data collected.",
+    "description": "Short description (max 132 characters)."
+  },
+  "actionTitle": {
+    "message": "LangBlock settings",
+    "description": "Toolbar button tooltip."
+  }
+}

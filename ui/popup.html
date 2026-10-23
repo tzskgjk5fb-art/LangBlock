@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LangBlock</title>
+    <link rel="stylesheet" href="settings.css" />
+  </head>
+  <body class="page-popup">
+    <main class="wrap">
+      <header class="top">
+        <img src="../icons/icon-48.png" alt="" width="28" height="28" />
+        <h1>LangBlock</h1>
+        <label class="switch" title="Turn LangBlock on or off">
+          <input type="checkbox" id="enabled" />
+          <span class="slider" aria-hidden="true"></span>
+          <span class="sr-only">Filtering on</span>
+        </label>
+      </header>
+      <p id="status" class="status" role="status"></p>
+
+      <section>
+        <h2>Blocked languages</h2>
+        <div id="chips" class="chips" aria-live="polite"></div>
+        <p id="no-langs" class="hint" hidden>No languages blocked yet. Pick one below to start.</p>
+        <input id="lang-search" type="search" placeholder="Add a language…" autocomplete="off" aria-label="Search languages" />
+        <ul id="lang-list" class="lang-list"></ul>
+      </section>
+
+      <footer class="foot foot-row">
+        <button id="open-options" type="button" class="link">All settings</button>
+        <a id="donate" class="donate" href="#" target="_blank" rel="noopener noreferrer" hidden>♥ Support</a>
+      </footer>
+    </main>
+    <script src="../src/config.js"></script>
+    <script src="../src/languages.js"></script>
+    <script src="../src/detect.js"></script>
+    <script src="../src/storage.js"></script>
+    <script src="settings.js"></script>
+  </body>
+</html>

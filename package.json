@@ -1,0 +1,16 @@
+{
+  "name": "langblock",
+  "version": "1.0.0",
+  "private": true,
+  "description": "LangBlock: hide YouTube videos in languages you choose.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/unit.test.mjs",
+    "test:e2e": "node tools/build.mjs && EXT_DIR=dist/chrome node tests/e2e.mjs",
+    "lint": "eslint src ui",
+    "lint:firefox": "node tools/build.mjs && npx web-ext lint --source-dir dist/firefox",
+    "icons": "node tools/render-icons.mjs",
+    "build": "node tools/build.mjs"
+  }
+}

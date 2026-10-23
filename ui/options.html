@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LangBlock settings</title>
+    <link rel="stylesheet" href="settings.css" />
+  </head>
+  <body class="page-options">
+    <main class="wrap">
+      <header class="top">
+        <img src="../icons/icon-48.png" alt="" width="32" height="32" />
+        <h1>LangBlock</h1>
+        <label class="switch" title="Turn LangBlock on or off">
+          <input type="checkbox" id="enabled" />
+          <span class="slider" aria-hidden="true"></span>
+          <span class="sr-only">Filtering on</span>
+        </label>
+      </header>
+      <p class="lede">Hide YouTube videos spoken in the languages you pick. Everything runs on your device.</p>
+
+      <section>
+        <h2>Blocked languages</h2>
+        <div id="chips" class="chips" aria-live="polite"></div>
+        <p id="no-langs" class="hint" hidden>No languages blocked yet. Pick one below to start.</p>
+        <input id="lang-search" type="search" placeholder="Search languages…" autocomplete="off" aria-label="Search languages" />
+        <ul id="lang-list" class="lang-list"></ul>
+      </section>
+
+      <section>
+        <h2>Where to filter</h2>
+        <label class="row"><input type="checkbox" data-surface="search" /> Search results</label>
+        <label class="row"><input type="checkbox" data-surface="home" /> Home page, subscriptions and other feeds</label>
+        <label class="row"><input type="checkbox" data-surface="watch" /> "Up next" suggestions next to a video</label>
+        <label class="row"><input type="checkbox" data-surface="channel" /> Channel pages</label>
+      </section>
+
+      <section>
+        <h2>Detection</h2>
+        <label class="row">
+          <input type="checkbox" id="deepCheck" />
+          <span>
+            <strong>Check the spoken language</strong> (recommended)
+            <small>Reads the spoken language that YouTube itself has recorded for each video (its auto-caption language and original audio track). This catches videos with translated or English titles. It loads each new video's page from YouTube once, and the result is remembered on this device. Turn this off to judge by titles only.</small>
+          </span>
+        </label>
+        <label class="row">
+          <input type="checkbox" id="blockDubbed" />
+          <span>
+            <strong>Also hide videos with a dubbed track</strong> in a blocked language
+            <small>For example, an English video that also offers Hindi dubbed audio.</small>
+          </span>
+        </label>
+        <label class="row">
+          <input type="checkbox" id="hideUntilChecked" />
+          <span>
+            <strong>Hide videos until they are checked</strong>
+            <small>Avoids briefly seeing a video before it is hidden. Videos may take a moment to appear.</small>
+          </span>
+        </label>
+      </section>
+
+      <section>
+        <h2>Hidden videos</h2>
+        <label class="row"><input type="radio" name="action" value="hide" /> Remove them completely</label>
+        <label class="row"><input type="radio" name="action" value="dim" /> Fade them out with a label saying why</label>
+      </section>
+
+      <section>
+        <h2>Stored on this device</h2>
+        <p class="hint"><span id="cache-count">0</span> videos' languages are remembered so they are not checked again.</p>
+        <button id="clear-cache" type="button" class="btn">Forget remembered videos</button>
+        <span id="cache-msg" class="hint" role="status"></span>
+      </section>
+
+      <footer class="foot">
+        <p>LangBlock is free. It collects no data and sends nothing anywhere except normal requests to YouTube.</p>
+        <p class="foot-row">
+          <a id="donate" class="donate" href="#" target="_blank" rel="noopener noreferrer" hidden>♥ Support LangBlock</a>
+          <span id="version" class="hint"></span>
+        </p>
+      </footer>
+    </main>
+    <script src="../src/config.js"></script>
+    <script src="../src/languages.js"></script>
+    <script src="../src/detect.js"></script>
+    <script src="../src/storage.js"></script>
+    <script src="settings.js"></script>
+  </body>
+</html>
