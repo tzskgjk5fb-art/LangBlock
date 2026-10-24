@@ -6,7 +6,7 @@ A free browser extension that hides YouTube videos spoken in languages you choos
 
 Each video card goes through two checks. Both run in your browser and need no API key or account.
 
-1. **Title check (instant, offline).** The title, channel name and snippet are run through the browser's built-in language detector (`i18n.detectLanguage`) and a writing-system check (for example Devanagari for Hindi). Clear matches are hidden immediately without any network request.
+1. **Title check (instant, offline).** The title, channel name and snippet are run through the browser's built-in language detector (`i18n.detectLanguage`) and a writing-system check (for example Devanagari for Hindi). Clear matches are hidden immediately. When the spoken-language check (below) finds YouTube's spoken-language information, that decides instead, so a French title on a video spoken in English is shown again. The title only decides on its own when YouTube has no spoken-language information.
 2. **Spoken-language check.** For videos that pass the title check, LangBlock loads the video's YouTube watch page once and reads two fields from the player data YouTube embeds in it (`ytInitialPlayerResponse`):
    - the language of the **auto-generated caption track** (`captionTracks[].kind == "asr"`), which is YouTube's own speech recognition naming the spoken language;
    - the **original audio track** (`audioTrack.id` like `hi.4`, or a display name containing "original") on videos with multiple audio tracks.

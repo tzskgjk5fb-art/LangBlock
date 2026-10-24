@@ -16,6 +16,8 @@ mkdirSync(shots, { recursive: true });
 // id -> what the watch page says about the video
 const VIDEOS = {
   hiTitle0001: { title: "आज का मौसम कैसा रहेगा", pr: { captions: [["hi", "asr"]] } },
+  hiTitleEnSp: { title: "फ़िल्म समीक्षा: नई फ़िल्म कैसी है", pr: { captions: [["en", "asr"]] } },
+  hiTitleNone: { title: "मेरा नया गाना सुनिए दोस्तों", pr: {} },
   hiAsr000001: { title: "iPhone 17 review after 30 days", pr: { captions: [["hi", "asr"], ["en", ""]] } },
   enAsr000001: { title: "How to cook pasta like an Italian", pr: { captions: [["en", "asr"]] } },
   hiOrig00001: { title: "Funny cat compilation 2026", pr: { audio: [["en.3", "English"], ["hi.4", "Hindi original"]] } },
@@ -74,7 +76,7 @@ function card(id, tag = "ytd-video-renderer") {
 }
 
 function searchPage() {
-  const ids = ["hiTitle0001", "hiAsr000001", "enAsr000001", "hiOrig00001", "enOrigDub01", "hiDesc00001"];
+  const ids = ["hiTitle0001", "hiTitleEnSp", "hiTitleNone", "hiAsr000001", "enAsr000001", "hiOrig00001", "enOrigDub01", "hiDesc00001"];
   return `<!doctype html><html><body><ytd-app><div id="contents">
 ${ids.map((id) => card(id)).join("\n")}
 <div class="future-layout" id="card-genericHi01">
@@ -149,8 +151,8 @@ try {
   assert.equal(state.hiDesc00001, "blocked", "Hindi description");
   assert.equal(state.genericHi01, "blocked", "unknown card layout");
   assert.equal(state.recycledEn1, "shown");
-  console.log("watch calls:", watchCalls);
-  assert.ok(!watchCalls.includes("hiTitle0001"), "title match needs no request");
+  assert.equal(state.hiTitleEnSp, "shown", "Hindi title but spoken English: spoken language wins");
+  assert.equal(state.hiTitleNone, "blocked", "Hindi title, no spoken-language info: title decides");
   assert.equal(await yt.isVisible("#card-hiAsr000001"), false, "blocked card is not displayed");
 
   // A card added later (infinite scroll)

@@ -239,24 +239,27 @@
     if (tokens.get(card) !== token) return;
 
     const fromText = LB.textVerdict(text, detection, blocked);
-    if (fromText) {
-      mark(card, "blocked", fromText);
-      return;
-    }
     if (!settings.deepCheck) {
-      mark(card, null);
+      mark(card, fromText ? "blocked" : null, fromText);
       return;
     }
 
     const sig = await getCached(id);
     if (tokens.get(card) !== token) return;
     if (sig) {
-      const v = LB.spokenVerdict(sig, blocked, settings);
-      mark(card, v && v !== "clear" ? "blocked" : null, v && v !== "clear" ? v : null);
+      const v = LB.finalVerdict(fromText, LB.spokenVerdict(sig, blocked, settings));
+      mark(card, v ? "blocked" : null, v);
       return;
     }
     if (failed.has(id)) {
-      mark(card, null);
+      mark(card, fromText ? "blocked" : null, fromText);
+      return;
+    }
+    if (fromText) {
+      // Hide straight away, then let the spoken language confirm it. Hidden
+      // cards never become visible, so queue the check directly.
+      mark(card, "blocked", fromText);
+      enqueue(id);
       return;
     }
     mark(card, "pending");

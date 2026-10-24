@@ -141,6 +141,15 @@ test("spokenVerdict: description is the last resort", () => {
   assert.equal(LB.spokenVerdict({ o: null, a: [], s: ["en"], d: "hi" }, set("hi")), "clear");
 });
 
+test("finalVerdict: spoken language outranks the title", () => {
+  const fr = { lang: "fr", source: "title" };
+  assert.equal(LB.finalVerdict(fr, "clear"), null);
+  assert.deepEqual({ ...LB.finalVerdict(fr, null) }, fr);
+  assert.deepEqual({ ...LB.finalVerdict(null, { lang: "fr", source: "captions" }) }, { lang: "fr", source: "captions" });
+  assert.equal(LB.finalVerdict(null, null), null);
+  assert.equal(LB.finalVerdict(null, "clear"), null);
+});
+
 test("extractPlayerResponse handles partial and full pages", () => {
   const json = JSON.stringify({ a: "x}{\"y", nested: { b: [1, { c: "}" }] } });
   const html = `<html><script>var foo = 1;var ytInitialPlayerResponse = ${json};var meta = {};</script></html>`;

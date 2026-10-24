@@ -276,6 +276,19 @@
   }
 
   /**
+   * Combine the title verdict with the spoken-language verdict. When YouTube
+   * knows the spoken language it decides: a French title on a video spoken
+   * in English is not a French video. The title only decides when there is
+   * no spoken-language information at all.
+   * @returns {{lang:string, source:string}|null} null = show the video
+   */
+  function finalVerdict(fromText, spoken) {
+    if (spoken && spoken !== "clear") return spoken;
+    if (spoken === "clear") return null;
+    return fromText || null;
+  }
+
+  /**
    * Language from a detectLanguage() result, if the detector is confident.
    */
   function confidentLanguage(detection, minPct = 60) {
@@ -364,6 +377,7 @@
     signalsFromPlayerResponse,
     descriptionFromPlayerResponse,
     spokenVerdict,
+    finalVerdict,
     confidentLanguage,
     DEFAULT_SETTINGS,
     sanitizeSettings,

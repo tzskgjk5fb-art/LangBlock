@@ -21,7 +21,7 @@ LangBlock hides YouTube videos in languages you don't want to see. Pick the lang
 
 HOW IT WORKS
 LangBlock checks each video in two ways, both on your device:
-• Title check: your browser's built-in language detector and writing-system check read the title, channel name and snippet. Obvious matches are hidden instantly.
+• Title check: your browser's built-in language detector and writing-system check read the title, channel name and snippet. Obvious matches are hidden instantly, then confirmed by the spoken-language check.
 • Spoken-language check: LangBlock reads the spoken language YouTube itself has recorded for the video, namely the language of YouTube's automatic captions and the video's original audio track. This catches videos whose titles are in English or were auto-translated by YouTube. Each video is checked once and the answer is remembered on your device.
 
 FEATURES
