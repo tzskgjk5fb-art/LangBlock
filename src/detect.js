@@ -95,13 +95,12 @@
       .map((l) => ({ code: normalizeCode(l.language), pct: Number(l.percentage) || 0 }))
       .filter((l) => l.code && l.code !== "und");
     const reliable = !!(detection && detection.isReliable);
-    const top = detected[0] || null;
 
-    // 1. The browser's language detector says a blocked language is a big
-    //    part of the text.
+    // 1. The browser's language detector is sure a blocked language is a
+    //    big part of the text. Covers romanized text too (Hinglish "hi-Latn").
     for (const d of detected) {
       if (!blocked.has(d.code)) continue;
-      if (reliable && d.pct >= 40) return { lang: d.code, source: "title" };
+      if (detectorTrusted(text, detection, d.code, d.pct, { total, counts })) return { lang: d.code, source: "title" };
     }
 
     // 2. Writing system check. Works offline in every browser and handles
@@ -125,13 +124,61 @@
       }
       return { lang: hits[0], source: "script" };
     }
-
-    // 3. Romanized text (e.g. Hinglish "hi-Latn"): only trust the detector
-    //    when it is the top, reliable answer.
-    if (top && reliable && blocked.has(top.code) && top.pct >= 60) {
-      return { lang: top.code, source: "title" };
-    }
     return null;
+  }
+
+  // Everyday words (articles, prepositions, pronouns) of Latin-alphabet
+  // languages. Brand and product names don't contain them, real sentences
+  // do. Words that are also common in English titles ("come", "die", "men",
+  // "op", "her", "may") are left out of the other languages. Hindi and Urdu
+  // are for romanized text.
+  const COMMON_WORDS = {
+    en: "the and of to for with you your this that how what why who are was is it in on my from by not do can will be at an",
+    es: "de del el la los las que qué por para con una unos como cómo más pero muy este esta esto también cuando donde dónde mis al se es su mi tu nos",
+    fr: "le la les de des du et un une est avec dans sur pas qui que au aux ce cette ces mon ma mes ta tes nous vous il ils elle elles je sont très pourquoi à où mais ou sans chez en leur leurs quoi quand",
+    pt: "de da das que para uma não mais como por em na nos nas ao aos se é meu minha seu sua você vocês muito também quando onde isso isto esse essa este esta até sem já pra ele ela eles ou mas",
+    it: "di del della dei delle degli il la le gli che per con una un non sono nel nella alla al è ma più anche questo questa perché cosa mio mia suo sua ci si da dal dalla tra fra ho molto quando",
+    de: "der das und ist nicht ein eine einen einem einer den dem des zu auf für von ich wir ihr sie es auch wie wird sind oder aber mein meine dein noch nur bei aus nach über vom zum zur sehr warum wenn dass kein keine",
+    nl: "de het een en dat niet te voor zijn ik je jij wij maar ook als aan bij om uit naar nog wat waarom mijn deze dit er heb hebben wordt geen",
+    id: "yang dan di ke dari ini itu untuk dengan tidak tak ada akan saya aku kamu kita kami mereka dia apa bagaimana cara juga sudah belum bisa lagi atau pada dalam karena sangat banget gak nggak jadi buat sama punya mau",
+    ms: "yang dan di ke dari ini itu untuk dengan tidak tak ada akan saya aku kamu kita kami mereka dia apa bagaimana cara juga sudah belum boleh lagi atau pada dalam kerana sangat jadi buat sama punya mahu nak",
+    fil: "ang ng mga sa na ay ko mo ka ako ikaw siya kami tayo sila ito iyan yan yung kung para lang din rin naman po ba pa nang kay ni paano bakit ano mayroon wala",
+    tr: "ve bir bu şu için ile da de mi mı mu mü ne çok daha gibi ama sen siz onlar var yok nasıl neden niye kadar olan oldu değil diye şey ki",
+    vi: "và của là có không những các một cho với được này đã người khi trong để thì mà cũng như sẽ tôi bạn anh em chị gì sao làm nào rất đến từ về ra đi ở",
+    pl: "się nie na jest że co jak ale po od za dla czy tak już jestem mój moja ta tym jego jej są oraz przez bez przy tylko bardzo kiedy dlaczego gdzie mnie mi ich tego",
+    ro: "și si în de la cu pe un să sa nu din pentru mai ce este sunt sau dar ca că al ale lui ei el noi voi foarte când unde cel cea acest această fără",
+    sw: "na ya wa kwa ni za la katika hii huu hiyo yangu yako yake sana lakini kama au pia mimi wewe yeye sisi nini vipi jinsi kwenye hapa leo kuhusu wakati bila cha vya",
+    sv: "och att det som en på är för med av den inte jag du vi de har om ett så hur varför mina din kan ska vad när från eller också mycket",
+    da: "og det er en på af med den de som jeg ikke har om et så hvordan hvorfor din kan skal hvad når fra eller også meget vi du der bliver",
+    no: "og det er en på av med den de som jeg ikke har om et så hvordan hvorfor din kan skal hva når fra eller også mye veldig vi du der",
+    fi: "ja ei se että kun mutta tai kanssa minä sinä hän te ne mitä miten miksi kuinka tämä tuo joka jos niin myös vain oli ovat olen ole minun sinun hyvin paljon kaikki",
+    cs: "je se na že jak ale jsem jsou co po od za už tak ta být má mám není nebo když proč kde který která které jeho její jsme také velmi moc bez při",
+    hu: "az és hogy nem egy meg de ez azt ezt csak már még mi ki mert vagy hogyan miért nagyon minden nekem neki lesz kell ha itt ott aki ami amit sem majd",
+    hi: "hai hain kya nahi nahin aur bhi mein yeh ye woh wo kaise kaisa kaisi kyun kyon kab kahan kar karo kare karte diya liya gaya raha rahe rahi hota hoti tha thi ka ki ke ko se ho hum tum aap apna apni mera meri tera teri wala wali bhai yaar ji bahut sab kuch ab phir aaj",
+  };
+  COMMON_WORDS.ur = COMMON_WORDS.hi;
+  const COMMON_WORD_SETS = {};
+  for (const [code, words] of Object.entries(COMMON_WORDS)) COMMON_WORD_SETS[code] = new Set(words.split(" "));
+
+  /**
+   * Whether the detector saying `code` at `pct` percent is solid enough to
+   * act on. The detector is easily fooled by short Latin-alphabet titles
+   * ("Adobe Premiere Pro CC Course" comes out as Italian, "Elden Ring DLC
+   * Boss Guide" as Norwegian), so there it has to be sure, at least 80%, and
+   * the text needs two everyday words of that language (or six words in all
+   * for languages without a word list). Other writing systems narrow the
+   * options a lot, so less is needed.
+   */
+  function detectorTrusted(text, detection, code, pct, scripts = analyzeScripts(text)) {
+    if (!detection || !detection.isReliable || !scripts.total) return false;
+    if ((scripts.counts.Latin || 0) / scripts.total < 0.5) return pct >= 40;
+    if (pct < 80) return false;
+    const words = new Set((String(text).normalize("NFC").match(/[\p{L}\p{M}]+/gu) || []).map((w) => w.toLowerCase()));
+    const common = COMMON_WORD_SETS[normalizeCode(code)];
+    if (!common) return [...words].filter((w) => w.length >= 3).length >= 6;
+    let hits = 0;
+    for (const w of words) if (common.has(w) && ++hits >= 2) return true;
+    return false;
   }
 
   // ---------------------------------------------------------------------
@@ -249,15 +296,19 @@
     const asr = sig.s || [];
     let spoken = null;
     let source = null;
+    // The "original" track among several is the most reliable. Next comes
+    // YouTube's speech recognition. A lone audio track's language is only
+    // what the creator picked, which is sometimes wrong (Urdu videos
+    // labelled English), so it comes last.
     if (sig.o) {
       spoken = sig.o;
-      source = "audio";
-    } else if (audio.length === 1) {
-      spoken = audio[0];
       source = "audio";
     } else if (asr.length > 0) {
       spoken = asr[0];
       source = "captions";
+    } else if (audio.length === 1) {
+      spoken = audio[0];
+      source = "audio";
     }
     if (spoken) {
       if (blocked.has(spoken)) return { lang: spoken, source };
@@ -355,12 +406,13 @@
 
 
   /**
-   * Language from a detectLanguage() result, if the detector is confident.
+   * Top language of a detectLanguage() result for `text`, when it is solid
+   * enough to act on.
    */
-  function confidentLanguage(detection, minPct = 60) {
-    if (!detection || !detection.isReliable || !Array.isArray(detection.languages)) return null;
-    const top = detection.languages[0];
-    if (!top || (Number(top.percentage) || 0) < minPct) return null;
+  function confidentLanguage(text, detection, minPct = 60) {
+    const top = detection && Array.isArray(detection.languages) ? detection.languages[0] : null;
+    const pct = top ? Number(top.percentage) || 0 : 0;
+    if (pct < minPct || !detectorTrusted(text, detection, top.language, pct)) return null;
     const code = normalizeCode(top.language);
     return code && code !== "und" ? code : null;
   }
@@ -440,6 +492,7 @@
   Object.assign(LB, {
     analyzeScripts,
     textVerdict,
+    detectorTrusted,
     scanJsonObject,
     extractPlayerResponse,
     signalsFromPlayerResponse,

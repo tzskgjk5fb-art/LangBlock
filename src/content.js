@@ -265,17 +265,19 @@
   // Troubleshooting label: what LangBlock found for this card.
   function describeSignals(sig) {
     if (!sig) return "not checked";
-    const spoken = sig.o || (sig.a.length === 1 ? sig.a[0] : null);
-    if (spoken) return `${LB.languageName(spoken)} (audio track)`;
+    if (sig.o) return `${LB.languageName(sig.o)} (original audio track)`;
     if (sig.s.length) return `${LB.languageName(sig.s[0])} (auto-captions)`;
+    if (sig.a.length === 1) return `${LB.languageName(sig.a[0])} (audio track label)`;
     if (sig.d) return `${LB.languageName(sig.d)} (description)`;
     return "no language info from YouTube";
   }
 
-  function describeDetection(detection) {
+  function describeDetection(text, detection) {
     const top = detection && Array.isArray(detection.languages) ? detection.languages[0] : null;
     if (!top) return "unknown";
-    return `${LB.languageName(top.language)} ${Math.round(top.percentage)}%${detection.isReliable ? "" : " (unsure)"}`;
+    const name = LB.languageName(top.language);
+    if (!LB.detectorTrusted(text, detection, top.language, top.percentage)) return `maybe ${name} (ignored)`;
+    return `${name} ${Math.round(top.percentage)}%`;
   }
 
   function setDebug(card, state, verdict, info) {
@@ -322,7 +324,7 @@
     const fromName = LB.nameVerdict(text + " · " + fullText, blocked);
     const info = {
       kind: isPlaylist ? `playlist, ${ids.length} video${ids.length === 1 ? "" : "s"} found` : "",
-      title: describeDetection(detection),
+      title: describeDetection(text, detection),
       name: fromName,
     };
     const decide = (state, verdict) => {
@@ -534,7 +536,8 @@
     // language of the full description.
     let d = null;
     if (!sig.o && sig.a.length === 0 && sig.s.length === 0) {
-      d = LB.confidentLanguage(await detect(LB.descriptionFromPlayerResponse(pr)));
+      const description = LB.descriptionFromPlayerResponse(pr);
+      d = LB.confidentLanguage(description, await detect(description));
     }
     return { o: sig.o, a: sig.a, s: sig.s, d, t: Date.now() };
   }

@@ -45,8 +45,40 @@ test("Marathi title is not blocked when only Hindi is blocked and detector says 
 });
 
 test("detector result for Hindi blocks", () => {
-  const v = LB.textVerdict("aaj ka mausam kaisa hai bhai", det(true, ["hi-Latn", 90]), set("hi"));
+  const v = LB.textVerdict("aaj ka mausam kaisa hai bhai dekho yeh video", det(true, ["hi-Latn", 90]), set("hi"));
   assert.equal(v && v.lang, "hi");
+});
+
+test("Latin-alphabet titles need everyday words of the detected language", () => {
+  // Chrome's detector really does say Maltese, 100%, reliable, for this one.
+  const brand = "Adobe Premiere Pro Tutorials · Editors Keys · Playlist";
+  assert.equal(LB.detectorTrusted(brand, det(true, ["mt", 100]), "mt", 100), true, "no word list: six words are enough");
+  assert.equal(LB.textVerdict(brand, det(true, ["it", 100]), set("it")), null);
+  assert.equal(LB.textVerdict("Adobe Premiere Pro CC Course GFXMentor", det(true, ["it", 100]), set("it")), null);
+  assert.equal(LB.textVerdict("Dan and Phil play UNO", det(true, ["id", 95]), set("id")), null, "one stray hit isn't enough");
+  const italian = "Come preparare la vera pasta alla carbonara romana";
+  assert.equal(LB.textVerdict(italian, det(true, ["it", 98]), set("it")).lang, "it");
+  assert.equal(LB.textVerdict(italian, det(false, ["it", 98]), set("it")), null, "unsure detector");
+  assert.equal(LB.textVerdict(italian, det(true, ["it", 70]), set("it")), null, "below 80%");
+  assert.equal(LB.textVerdict("Les meilleurs moments de la saison", det(true, ["fr", 100]), set("fr")).lang, "fr");
+  assert.equal(LB.textVerdict("Cómo hacer una paella valenciana", det(true, ["es", 100]), set("es")).lang, "es");
+});
+
+test("other writing systems keep the lighter detector rule", () => {
+  assert.equal(LB.detectorTrusted("Новое видео", det(true, ["ru", 50]), "ru", 50), true);
+  assert.equal(LB.detectorTrusted("Новое видео", det(false, ["ru", 99]), "ru", 99), false);
+});
+
+test("description language needs the same evidence", () => {
+  assert.equal(LB.confidentLanguage("Adobe Premiere Pro Tutorials", det(true, ["it", 100])), null);
+  const desc = "In questo video vi mostro come fare la pasta fresca in casa, passo per passo.";
+  assert.equal(LB.confidentLanguage(desc, det(true, ["it", 99])), "it");
+  assert.equal(LB.confidentLanguage("", null), null);
+});
+
+test("spokenVerdict: auto-captions beat a lone audio track's label", () => {
+  assert.deepEqual({ ...LB.spokenVerdict({ o: null, a: ["en"], s: ["hi"] }, set("hi")) }, { lang: "hi", source: "captions" });
+  assert.equal(LB.spokenVerdict({ o: null, a: ["en"], s: [] }, set("hi")), "clear");
 });
 
 test("English title is not blocked", () => {

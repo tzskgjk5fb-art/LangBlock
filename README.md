@@ -6,12 +6,13 @@ A free browser extension that hides YouTube videos spoken in languages you choos
 
 Each video card goes through two checks. Both run in your browser and need no API key or account.
 
-1. **Title check (instant, offline).** The title, channel name and snippet are run through the browser's built-in language detector (`i18n.detectLanguage`) and a writing-system check (for example Devanagari for Hindi). Clear matches are hidden immediately. When the spoken-language check (below) finds YouTube's spoken-language information, that decides instead, so a French title on a video spoken in English is shown again. The title only decides on its own when YouTube has no spoken-language information.
+1. **Title check (instant, offline).** The title, channel name and snippet are run through the browser's built-in language detector (`i18n.detectLanguage`) and a writing-system check (for example Devanagari for Hindi). Clear matches are hidden immediately. Short titles in the Latin alphabet fool the detector (it calls "Adobe Premiere Pro Tutorials" Italian), so for those it has to be sure, at least 80%, and the text has to contain two everyday words of that language, such as "di", "il" or "che" for Italian. When the spoken-language check (below) finds YouTube's spoken-language information, that decides instead, so a French title on a video spoken in English is shown again. The title only decides on its own when YouTube has no spoken-language information.
 2. **Spoken-language check.** For videos that pass the title check, LangBlock loads the video's YouTube watch page once and reads two fields from the player data YouTube embeds in it (`ytInitialPlayerResponse`):
+   - the **original audio track** (`audioTrack.id` like `hi.4`, or a display name containing "original") on videos with multiple audio tracks;
    - the language of the **auto-generated caption track** (`captionTracks[].kind == "asr"`), which is YouTube's own speech recognition naming the spoken language;
-   - the **original audio track** (`audioTrack.id` like `hi.4`, or a display name containing "original") on videos with multiple audio tracks.
+   - the language of a video's only audio track. This is whatever the uploader picked and is sometimes wrong, so it counts only when there are no auto-captions.
 
-   If neither exists, the full description is run through the language detector. The page is read as a stream and the download stops as soon as the player data is complete. Only cards near the screen are checked, two at a time, and the results are cached on the device (60 days, or 3 days when nothing was found).
+   If none of these exists, the full description is run through the language detector. The page is read as a stream and the download stops as soon as the player data is complete. Only cards near the screen are checked, two at a time, and the results are cached on the device (60 days, or 3 days when nothing was found).
 
 The second check matters because YouTube auto-translates titles and auto-dubs audio, so a Hindi video can show an English title.
 
@@ -25,7 +26,7 @@ The second check matters because YouTube auto-translates titles and auto-dubs au
 - **Language named in the title.** "in Hindi", "(Hindi)", "| Hindi", "Urdu / Hindi" or "Hindi dubbed" count as a signal. This outranks YouTube's spoken-language label, because that label isn't always right. "Learn Hindi", "Hindi vs Urdu" or "French toast" don't count.
 
 ### Troubleshooting mode
-Settings → Troubleshooting → "Show LangBlock's reasoning on every video" labels each recognised video with what LangBlock found (spoken language and where it came from, the title's detected language, any language named in the text) and fades hidden videos instead of removing them. A video with no label wasn't recognised as a video card.
+Settings → Troubleshooting → "Show LangBlock's reasoning on every video" labels each recognised video with what LangBlock found (spoken language and where it came from, the title's detected language, shown as "maybe Italian (ignored)" when the guess was too weak to use, and any language named in the text) and fades hidden videos instead of removing them. A video with no label wasn't recognised as a video card.
 
 ### Known limits
 - Videos without auto-captions or audio-track info (music, very short or brand-new videos) fall back to title and description.
