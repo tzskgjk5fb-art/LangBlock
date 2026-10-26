@@ -11,10 +11,43 @@
   let settings = LB.sanitizeSettings(null);
 
   const sortedLanguages = [...LB.LANGUAGES].sort((a, b) => a.name.localeCompare(b.name));
+  // More chips than this would fill the page, so a summary is shown instead.
+  const MAX_CHIPS = 12;
+
+  // The browser's own language, which "Block all" leaves unblocked.
+  const ownLanguage = (() => {
+    let ui = "";
+    try {
+      ui = api.i18n.getUILanguage();
+    } catch {
+      ui = "";
+    }
+    for (const tag of [ui, ...(navigator.languages || []), navigator.language]) {
+      const code = LB.normalizeCode(tag);
+      if (code && LB.LANGUAGE_BY_CODE[code]) return code;
+    }
+    return null;
+  })();
+  const allButOwn = sortedLanguages.map((l) => l.code).filter((c) => c !== ownLanguage);
+
+  let undo = null; // blocked list from before the last "Block all"/"Unblock all"
 
   async function save() {
     settings = await LB.storage.saveSettings(settings);
     render();
+  }
+
+  // Individual picks replace the bulk action's Undo.
+  function setBlocked(codes) {
+    undo = null;
+    settings.blocked = codes;
+    save();
+  }
+
+  function bulkSet(codes, message) {
+    undo = { blocked: settings.blocked.slice(), message };
+    settings.blocked = codes;
+    save();
   }
 
   function el(tag, props = {}, text) {
@@ -27,15 +60,21 @@
   function renderChips() {
     const chips = $("chips");
     chips.replaceChildren();
+    if (settings.blocked.length > MAX_CHIPS) {
+      const blocked = new Set(settings.blocked);
+      const open = sortedLanguages.filter((l) => !blocked.has(l.code)).map((l) => l.name);
+      let text = `Blocking ${blocked.size} of ${sortedLanguages.length} languages.`;
+      if (open.length > 0 && open.length <= 5) text += ` Not blocked: ${open.join(", ")}.`;
+      chips.append(el("span", { className: "summary" }, text));
+      $("no-langs").hidden = true;
+      return;
+    }
     for (const code of settings.blocked) {
       const chip = el("span", { className: "chip" });
       chip.append(el("span", {}, LB.languageName(code)));
       const remove = el("button", { type: "button", className: "chip-x", title: "Stop blocking" }, "×");
       remove.setAttribute("aria-label", `Stop blocking ${LB.languageName(code)}`);
-      remove.addEventListener("click", () => {
-        settings.blocked = settings.blocked.filter((c) => c !== code);
-        save();
-      });
+      remove.addEventListener("click", () => setBlocked(settings.blocked.filter((c) => c !== code)));
       chip.append(remove);
       chips.append(chip);
     }
@@ -63,8 +102,7 @@
         const set = new Set(settings.blocked);
         if (box.checked) set.add(lang.code);
         else set.delete(lang.code);
-        settings.blocked = [...set];
-        save();
+        setBlocked([...set]);
       });
       label.append(box, el("span", {}, lang.name), el("small", { className: "code" }, lang.code));
       li.append(label);
@@ -73,10 +111,30 @@
     if (matches.length === 0) list.append(el("li", { className: "hint" }, "No matching language."));
   }
 
+  function renderBulk() {
+    const blocked = new Set(settings.blocked);
+    const blockAll = $("block-all");
+    if (ownLanguage) {
+      blockAll.hidden = false;
+      blockAll.textContent = `Block all except ${LB.languageName(ownLanguage)}`;
+      blockAll.disabled = blocked.size === allButOwn.length && allButOwn.every((c) => blocked.has(c));
+    }
+    $("unblock-all").disabled = blocked.size === 0;
+
+    const msg = $("bulk-msg");
+    msg.replaceChildren();
+    msg.hidden = !undo;
+    if (!undo) return;
+    const back = el("button", { type: "button", className: "link" }, "Undo");
+    back.addEventListener("click", () => setBlocked(undo.blocked));
+    msg.append(undo.message, back);
+  }
+
   function render() {
     $("enabled").checked = settings.enabled;
     document.body.classList.toggle("is-off", !settings.enabled);
     renderChips();
+    renderBulk();
     renderList();
     for (const box of document.querySelectorAll("[data-surface]")) {
       box.checked = !!settings.surfaces[box.dataset.surface];
@@ -95,6 +153,10 @@
       save();
     });
     $("lang-search").addEventListener("input", renderList);
+    $("block-all").addEventListener("click", () =>
+      bulkSet(allButOwn, `Blocking every language except ${LB.languageName(ownLanguage)}.`)
+    );
+    $("unblock-all").addEventListener("click", () => bulkSet([], "Unblocked all languages."));
     for (const box of document.querySelectorAll("[data-surface]")) {
       box.addEventListener("change", () => {
         settings.surfaces = { ...settings.surfaces, [box.dataset.surface]: box.checked };

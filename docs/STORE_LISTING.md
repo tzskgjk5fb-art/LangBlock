@@ -25,7 +25,7 @@ LangBlock checks each video in two ways, both on your device:
 • Spoken-language check: LangBlock reads the spoken language YouTube itself has recorded for the video, namely the language of YouTube's automatic captions and the video's original audio track. This catches videos whose titles are in English or were auto-translated by YouTube. Each video is checked once and the answer is remembered on your device.
 
 FEATURES
-• Block any number of languages (80+ supported)
+• Block any number of languages (80+ supported), or every language except your own in one click
 • Also filters playlists, by checking the videos they list
 • Choose where to filter: search, home and feeds, "Up next", channel pages
 • Optionally hide videos that offer a dubbed audio track in a blocked language

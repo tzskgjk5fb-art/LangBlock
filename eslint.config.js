@@ -8,7 +8,7 @@ export default [
         globalThis: "readonly", window: "readonly", document: "readonly", location: "readonly",
         URL: "readonly", CSS: "readonly", fetch: "readonly", setTimeout: "readonly", clearTimeout: "readonly",
         AbortController: "readonly", TextDecoder: "readonly", IntersectionObserver: "readonly",
-        MutationObserver: "readonly",
+        MutationObserver: "readonly", navigator: "readonly",
       },
     },
     rules: {

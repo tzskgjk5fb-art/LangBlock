@@ -262,6 +262,39 @@ try {
   assert.ok(Object.values(await hiddenState(yt)).every((s) => s === "shown"), "extension off");
   await options.check("#enabled");
 
+  // "Block all except English", individual changes afterwards, "Unblock all" and Undo
+  const summary = () => options.textContent("#chips");
+  assert.equal(await options.textContent("#block-all"), "Block all except English");
+  await options.click("#block-all");
+  await options.waitForFunction(() => document.getElementById("chips").textContent.startsWith("Blocking"));
+  assert.match(await summary(), /^Blocking (\d+) of \1 languages\.|^Blocking \d+ of \d+ languages\. Not blocked: English\.$/);
+  assert.equal(await options.isDisabled("#block-all"), true, "already blocking all but English");
+  assert.equal(await options.isVisible("#bulk-msg button"), true, "undo offered");
+  await yt.waitForTimeout(500);
+  await waitSettled(yt);
+  state = await hiddenState(yt);
+  assert.equal(state.enAsr000001, "shown", "English stays visible with everything else blocked");
+  assert.equal(state.hiAsr000001, "blocked");
+  await options.fill("#lang-search", "fren");
+  await options.uncheck("#lang-list input[type=checkbox]");
+  await options.waitForFunction(() => document.getElementById("chips").textContent.endsWith("Not blocked: English, French."));
+  assert.equal(await options.isVisible("#bulk-msg"), false, "an individual change replaces Undo");
+  assert.equal(await options.isDisabled("#block-all"), false);
+  await options.fill("#lang-search", "");
+  await options.click("#unblock-all");
+  await options.waitForSelector("#no-langs", { state: "visible" });
+  assert.equal(await options.isDisabled("#unblock-all"), true);
+  await yt.waitForTimeout(500);
+  assert.ok(Object.values(await hiddenState(yt)).every((s) => s === "shown"), "nothing blocked");
+  await options.click("#bulk-msg button");
+  await options.waitForFunction(() => document.getElementById("chips").textContent.endsWith("Not blocked: English, French."));
+  // Back to Hindi only
+  await options.click("#unblock-all");
+  await options.fill("#lang-search", "hin");
+  await options.check("#lang-list input[type=checkbox]");
+  await options.fill("#lang-search", "");
+  await options.waitForFunction(() => document.querySelector("#chips .chip span")?.textContent === "Hindi");
+
   // Popup reports the count for the active tab
   await yt.bringToFront();
   const popup = await context.newPage();

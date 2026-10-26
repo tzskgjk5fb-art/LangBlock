@@ -162,6 +162,35 @@ input[type="search"] {
   font: inherit;
 }
 
+.bulk {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.btn-small {
+  padding: 5px 10px;
+  font-size: 13px;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.bulk-msg {
+  margin: -4px 0 10px;
+}
+
+.bulk-msg .link {
+  margin-left: 6px;
+}
+
+.chips .summary {
+  color: var(--text);
+}
+
 .lang-list {
   list-style: none;
   margin: 8px 0 0;
@@ -202,7 +231,7 @@ input[type="search"] {
   cursor: pointer;
 }
 
-.btn:hover {
+.btn:hover:not(:disabled) {
   border-color: var(--accent);
 }
 
