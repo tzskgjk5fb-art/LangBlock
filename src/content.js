@@ -23,6 +23,11 @@
     "ytd-grid-video-renderer",
     "ytd-reel-item-renderer",
     "ytd-movie-renderer",
+    "ytd-playlist-renderer",
+    "ytd-radio-renderer",
+    "ytd-grid-playlist-renderer",
+    "ytd-compact-playlist-renderer",
+    "ytd-compact-radio-renderer",
     "yt-lockup-view-model",
     "ytm-shorts-lockup-view-model",
     "ytm-shorts-lockup-view-model-v2",
@@ -32,10 +37,12 @@
     "ytm-video-card-renderer",
     "ytm-reel-item-renderer",
     "ytm-media-item",
+    "ytm-compact-playlist-renderer",
   ];
   const CARD_SELECTOR = CARDS.join(",");
   const OUTER_SELECTOR = OUTER_CARDS.join(",");
   const LINK_SELECTOR = 'a[href*="/watch?v="], a[href*="/shorts/"]';
+  const PLAYLIST_LINK_SELECTOR = 'a[href*="list="]';
 
   // Areas whose links are never video cards we should hide.
   const IGNORE_SELECTOR = [
@@ -119,6 +126,18 @@
   // Finding cards
   // -------------------------------------------------------------------
 
+  function playlistIdOf(el) {
+    for (const a of el.querySelectorAll(PLAYLIST_LINK_SELECTOR)) {
+      try {
+        const list = new URL(a.getAttribute("href"), "https://www.youtube.com").searchParams.get("list");
+        if (list && /^[A-Za-z0-9_-]{2,64}$/.test(list)) return list;
+      } catch {
+        /* ignore malformed links */
+      }
+    }
+    return null;
+  }
+
   // Distinct videos a card links to: one for a normal video, several for a
   // playlist card that lists its first videos.
   function cardVideoIds(el) {
@@ -162,14 +181,21 @@
   }
 
   function findCards() {
-    const found = new Map(); // card -> video ids
+    const found = new Map(); // card -> { ids, key }
     for (const el of document.querySelectorAll(CARD_SELECTOR)) {
       // Skip inner cards of an outer wrapper; the wrapper is handled instead.
       const outer = el.parentElement && el.parentElement.closest(OUTER_SELECTOR);
       if (outer) continue;
       if (el.closest(IGNORE_SELECTOR)) continue;
       const ids = cardVideoIds(el);
-      if (ids.length) found.set(el, ids);
+      if (ids.length) {
+        found.set(el, { ids, key: ids.join(" ") });
+        continue;
+      }
+      // A playlist card that only links to the playlist page can still be
+      // judged by its text.
+      const list = playlistIdOf(el);
+      if (list) found.set(el, { ids: [], key: "list:" + list });
     }
     const watching = currentWatchId();
     for (const a of document.querySelectorAll(LINK_SELECTOR)) {
@@ -177,7 +203,7 @@
       const id = LB.videoIdFromHref(a.getAttribute("href"));
       if (!id || id === watching) continue;
       const card = genericCardFor(a, id);
-      if (card && !found.has(card) && !card.querySelector(CARD_SELECTOR)) found.set(card, [id]);
+      if (card && !found.has(card) && !card.querySelector(CARD_SELECTOR)) found.set(card, { ids: [id], key: id });
     }
     return found;
   }
@@ -236,32 +262,78 @@
     }
   }
 
+  // Troubleshooting label: what LangBlock found for this card.
+  function describeSignals(sig) {
+    if (!sig) return "not checked";
+    const spoken = sig.o || (sig.a.length === 1 ? sig.a[0] : null);
+    if (spoken) return `${LB.languageName(spoken)} (audio track)`;
+    if (sig.s.length) return `${LB.languageName(sig.s[0])} (auto-captions)`;
+    if (sig.d) return `${LB.languageName(sig.d)} (description)`;
+    return "no language info from YouTube";
+  }
+
+  function describeDetection(detection) {
+    const top = detection && Array.isArray(detection.languages) ? detection.languages[0] : null;
+    if (!top) return "unknown";
+    return `${LB.languageName(top.language)} ${Math.round(top.percentage)}%${detection.isReliable ? "" : " (unsure)"}`;
+  }
+
+  function setDebug(card, state, verdict, info) {
+    if (!settings.debug) {
+      card.removeAttribute("data-langblock-debug");
+      return;
+    }
+    const head = state === "blocked" ? `Hidden: ${LB.languageName(verdict.lang)} (${verdict.source})` : state === "pending" ? "Checking" : "Shown";
+    const parts = [`LangBlock: ${head}`];
+    if (info.kind) parts.push(info.kind);
+    if (info.spoken) parts.push(`spoken: ${info.spoken}`);
+    if (info.title) parts.push(`title: ${info.title}`);
+    if (info.name) parts.push(`names ${LB.languageName(info.name.lang)}`);
+    card.setAttribute("data-langblock-debug", parts.join(" · "));
+  }
+
   function filteringActive() {
     if (!settings.enabled || blocked.size === 0) return false;
     const surface = LB.surfaceForPath(location.pathname);
     return !!(surface && settings.surfaces[surface]);
   }
 
-  async function evaluate(card, ids) {
+  async function evaluate(card, ids, key) {
     const token = (tokens.get(card) || 0) + 1;
     tokens.set(card, token);
     card.setAttribute("data-lb-ids", ids.join(" "));
+    card.setAttribute("data-lb-key", key);
 
     if (!filteringActive()) {
       mark(card, null);
+      card.removeAttribute("data-langblock-debug");
       return;
     }
 
-    const isPlaylist = ids.length > 1;
+    const isPlaylist = ids.length !== 1;
     const text = cardText(card, isPlaylist);
     const detection = await detect(text);
     if (tokens.get(card) !== token) return;
 
     const fromText = LB.textVerdict(text, detection, blocked);
-    const fromName = LB.nameVerdict(text, blocked);
-    if (!settings.deepCheck) {
+    // Language names are matched against everything on the card, so a
+    // playlist's listed videos ("Class 1 - Urdu / Hindi") count too.
+    const fullText = (card.textContent || "").replace(/\s+/g, " ").slice(0, 3000);
+    const fromName = LB.nameVerdict(text + " · " + fullText, blocked);
+    const info = {
+      kind: isPlaylist ? `playlist, ${ids.length} video${ids.length === 1 ? "" : "s"} found` : "",
+      title: describeDetection(detection),
+      name: fromName,
+    };
+    const decide = (state, verdict) => {
+      mark(card, state, verdict);
+      setDebug(card, state, verdict, info);
+    };
+
+    if (!settings.deepCheck || ids.length === 0) {
       const v = LB.finalVerdict(fromText, null, fromName);
-      mark(card, v ? "blocked" : null, v);
+      info.spoken = settings.deepCheck ? "no videos found on the card" : "check turned off";
+      decide(v ? "blocked" : null, v);
       return;
     }
 
@@ -270,10 +342,13 @@
     const spokenEach = sigs.map((sig) => (sig ? LB.spokenVerdict(sig, blocked, settings) : null));
     const spoken = isPlaylist ? LB.playlistVerdict(spokenEach) : spokenEach[0];
     const unknown = ids.filter((id, i) => !sigs[i] && !failed.has(id));
+    info.spoken = ids
+      .map((id, i) => (sigs[i] ? describeSignals(sigs[i]) : failed.has(id) ? "check failed" : "checking"))
+      .join("; ");
 
     if (unknown.length === 0) {
       const v = LB.finalVerdict(fromText, spoken, fromName);
-      mark(card, v ? "blocked" : null, v);
+      decide(v ? "blocked" : null, v);
       return;
     }
     // Still waiting for some videos. Hide straight away if what we know so
@@ -281,11 +356,11 @@
     // cards never become visible, so queue their checks directly.
     const early = LB.finalVerdict(fromText, spoken && spoken !== "clear" ? spoken : null, fromName);
     if (early) {
-      mark(card, "blocked", early);
+      decide("blocked", early);
       unknown.forEach(enqueue);
       return;
     }
-    mark(card, "pending");
+    decide("pending", null);
     if (settings.hideUntilChecked) unknown.forEach(enqueue);
     else visibility.observe(card);
   }
@@ -310,7 +385,7 @@
 
   function reevaluateId(id) {
     for (const card of document.querySelectorAll(`[data-lb-ids~="${CSS.escape(id)}"]`)) {
-      evaluate(card, cardIds(card));
+      evaluate(card, cardIds(card), card.getAttribute("data-lb-key") || id);
     }
   }
 
@@ -472,6 +547,7 @@
     const root = document.documentElement;
     root.setAttribute("data-langblock-mode", settings.action);
     root.toggleAttribute("data-langblock-hide-pending", settings.hideUntilChecked);
+    root.toggleAttribute("data-langblock-debug", settings.debug);
   }
 
   let scanScheduled = false;
@@ -485,10 +561,10 @@
   }
 
   function scan() {
-    for (const [card, ids] of findCards()) {
-      if (card.getAttribute("data-lb-ids") === ids.join(" ") && card.hasAttribute("data-lb-done")) continue;
+    for (const [card, { ids, key }] of findCards()) {
+      if (card.getAttribute("data-lb-key") === key && card.hasAttribute("data-lb-done")) continue;
       card.setAttribute("data-lb-done", "");
-      evaluate(card, ids);
+      evaluate(card, ids, key);
     }
   }
 

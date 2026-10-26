@@ -22,8 +22,10 @@ The second check matters because YouTube auto-translates titles and auto-dubs au
 
 ### Playlists and language names
 - **Playlist cards** list their first videos. LangBlock checks up to three of them and hides the playlist when at least half of the videos with a known language are in a blocked language. Their titles are also included in the title check.
-- **Language named in the title.** "in Hindi", "(Hindi)", "| Hindi", "Urdu / Hindi" or "Hindi dubbed" count as a signal. This outranks YouTube's spoken-language label, because YouTube may label speech that is almost identical (Hindi and Urdu) as the other language. "Learn Hindi", "Hindi vs Urdu" or "French toast" don't count.
-- **Close languages.** When a blocked language has a near-identical spoken relative (Hindi and Urdu, Malay and Indonesian, Serbian, Croatian and Bosnian), the settings page suggests blocking it too.
+- **Language named in the title.** "in Hindi", "(Hindi)", "| Hindi", "Urdu / Hindi" or "Hindi dubbed" count as a signal. This outranks YouTube's spoken-language label, because that label isn't always right. "Learn Hindi", "Hindi vs Urdu" or "French toast" don't count.
+
+### Troubleshooting mode
+Settings → Troubleshooting → "Show LangBlock's reasoning on every video" labels each recognised video with what LangBlock found (spoken language and where it came from, the title's detected language, any language named in the text) and fades hidden videos instead of removing them. A video with no label wasn't recognised as a video card.
 
 ### Known limits
 - Videos without auto-captions or audio-track info (music, very short or brand-new videos) fall back to title and description.

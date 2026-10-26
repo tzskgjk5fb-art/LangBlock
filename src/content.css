@@ -1,5 +1,5 @@
 /* LangBlock: how hidden videos look. Only touches elements LangBlock marked. */
-html:not([data-langblock-mode="dim"]) [data-langblock="blocked"] {
+html:not([data-langblock-mode="dim"]):not([data-langblock-debug]) [data-langblock="blocked"] {
   display: none !important;
 }
 
@@ -33,5 +33,33 @@ html[data-langblock-mode="dim"] [data-langblock="blocked"]::before {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  pointer-events: none;
+}
+
+/* Troubleshooting mode: hidden videos are faded, and every recognised video
+   gets a label with what LangBlock found. */
+html[data-langblock-debug] [data-langblock="blocked"] {
+  opacity: 0.4 !important;
+}
+
+html[data-langblock-debug] [data-langblock-debug] {
+  position: relative !important;
+}
+
+html[data-langblock-debug] [data-langblock-debug]::after {
+  content: attr(data-langblock-debug);
+  position: absolute;
+  z-index: 11;
+  left: 6px;
+  bottom: 6px;
+  width: max-content;
+  min-width: 160px;
+  max-width: calc(100% - 12px);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font: 500 11px/16px Roboto, Arial, sans-serif;
+  color: #fff;
+  background: rgba(79, 70, 229, 0.92);
+  white-space: normal;
   pointer-events: none;
 }

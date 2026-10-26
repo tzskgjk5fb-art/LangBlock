@@ -327,7 +327,7 @@
    * Combine everything we know about a video.
    * 1. YouTube says it is spoken in a blocked language: hide.
    * 2. The title names a blocked language ("in Hindi"): hide, even when
-   *    YouTube labels the speech as something close (e.g. Urdu).
+   *    YouTube labels the speech as another language.
    * 3. YouTube knows the spoken language and it isn't blocked: show. A
    *    French-looking title on a video spoken in English is not French.
    * 4. Otherwise the title's detected language decides.
@@ -353,17 +353,6 @@
     return hits.length * 2 >= known.length ? hits[0] : "clear";
   }
 
-  // Languages that sound almost the same when spoken, so YouTube may label a
-  // video as either. The settings page suggests blocking them together.
-  const RELATED_LANGUAGES = {
-    hi: ["ur"],
-    ur: ["hi"],
-    ms: ["id"],
-    id: ["ms"],
-    sr: ["hr", "bs"],
-    hr: ["sr", "bs"],
-    bs: ["sr", "hr"],
-  };
 
   /**
    * Language from a detectLanguage() result, if the detector is confident.
@@ -388,6 +377,7 @@
     blockDubbed: false,
     hideUntilChecked: false,
     action: "hide", // "hide" | "dim"
+    debug: false, // label every video with what LangBlock found
   });
 
   const KNOWN_CODES = new Set(LANGUAGES.map((l) => l.code));
@@ -412,6 +402,7 @@
       deepCheck: bool(s.deepCheck, DEFAULT_SETTINGS.deepCheck),
       blockDubbed: bool(s.blockDubbed, DEFAULT_SETTINGS.blockDubbed),
       hideUntilChecked: bool(s.hideUntilChecked, DEFAULT_SETTINGS.hideUntilChecked),
+      debug: bool(s.debug, DEFAULT_SETTINGS.debug),
       action: s.action === "dim" ? "dim" : "hide",
     };
   }
@@ -457,7 +448,6 @@
     nameVerdict,
     finalVerdict,
     playlistVerdict,
-    RELATED_LANGUAGES,
     confidentLanguage,
     DEFAULT_SETTINGS,
     sanitizeSettings,

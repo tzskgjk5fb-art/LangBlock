@@ -108,6 +108,12 @@ ${card("recycledEn1")}
 ${playlistCard("plHindi", "Learn editing", "plHiVid0001", "plHiVid0002")}
 ${playlistCard("plUrduHindi", "Adobe Premiere Pro CC Course", "plUrVid0001", "plUrVid0002")}
 ${playlistCard("plEnglish", "Editing course", "plEnVid0001", "plEnVid0002")}
+<ytd-playlist-renderer id="card-plTextOnly" class="card">
+  <a href="/playlist?list=PLtextonly"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" width="160" height="90"></a>
+  <h3><a href="/playlist?list=PLtextonly">Adobe Premiere Pro CC Course</a></h3>
+  <div>Before you Start Learning Adobe Premiere Pro CC Class 1 - Urdu / Hindi · 22:21</div>
+  <a href="/playlist?list=PLtextonly">View full playlist</a>
+</ytd-playlist-renderer>
 </div></ytd-app></body></html>`;
 }
 
@@ -163,8 +169,6 @@ try {
   await options.check("#lang-list input[type=checkbox]");
   await options.waitForSelector(".chip");
   assert.equal(await options.textContent(".chip span"), "Hindi");
-  assert.ok(await options.isVisible("#related"), "suggests Urdu when Hindi is blocked");
-  assert.match(await options.textContent("#related"), /Also block Urdu/);
   await options.fill("#lang-search", "");
   await options.screenshot({ path: path.join(shots, "options.png"), fullPage: true });
   assert.ok(await options.isVisible("#donate"), "donation link shown");
@@ -187,6 +191,7 @@ try {
   assert.equal(state.plHindi, "blocked", "playlist of Hindi videos");
   assert.equal(state.plUrduHindi, "blocked", "playlist whose videos say 'Urdu / Hindi'");
   assert.equal(state.plEnglish, "shown", "playlist of English videos");
+  assert.equal(state.plTextOnly, "blocked", "playlist card without video links, judged by its text");
   assert.equal(state.hiTitleEnSp, "shown", "Hindi title but spoken English: spoken language wins");
   assert.equal(state.hiTitleNone, "blocked", "Hindi title, no spoken-language info: title decides");
   assert.equal(await yt.isVisible("#card-hiAsr000001"), false, "blocked card is not displayed");
@@ -227,6 +232,22 @@ try {
   assert.equal(why, "Hidden by LangBlock: Hindi (spoken)");
   await yt.screenshot({ path: path.join(shots, "search-dimmed.png"), fullPage: true });
   await options.check('input[name="action"][value="hide"]');
+
+  // Troubleshooting labels
+  await options.check("#debug");
+  await yt.waitForTimeout(500);
+  await waitSettled(yt);
+  const shownLabel = await yt.getAttribute("#card-enAsr000001", "data-langblock-debug");
+  console.log("debug label (shown):", shownLabel);
+  assert.match(shownLabel, /^LangBlock: Shown · spoken: English \(auto-captions\)/);
+  const hiddenLabel = await yt.getAttribute("#card-plUrduHindi", "data-langblock-debug");
+  console.log("debug label (hidden):", hiddenLabel);
+  assert.match(hiddenLabel, /^LangBlock: Hidden: Hindi \(name\) · playlist, 2 videos found/);
+  assert.equal(await yt.isVisible("#card-hiAsr000001"), true, "hidden videos are faded in troubleshooting mode");
+  await yt.screenshot({ path: path.join(shots, "search-debug.png"), fullPage: true });
+  await options.uncheck("#debug");
+  await yt.waitForTimeout(400);
+  assert.equal(await yt.getAttribute("#card-enAsr000001", "data-langblock-debug"), null, "labels removed");
 
   // Turning search filtering off shows everything
   await options.uncheck('[data-surface="search"]');

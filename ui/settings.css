@@ -120,10 +120,6 @@ small {
   margin-bottom: 8px;
 }
 
-.related p {
-  margin: 0 0 8px;
-}
-
 .chips:empty {
   display: none;
 }

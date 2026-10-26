@@ -22,7 +22,6 @@
       <section>
         <h2>Blocked languages</h2>
         <div id="chips" class="chips" aria-live="polite"></div>
-        <div id="related" class="related" hidden></div>
         <p id="no-langs" class="hint" hidden>No languages blocked yet. Pick one below to start.</p>
         <input id="lang-search" type="search" placeholder="Search languages…" autocomplete="off" aria-label="Search languages" />
         <ul id="lang-list" class="lang-list"></ul>
@@ -65,6 +64,17 @@
         <h2>Hidden videos</h2>
         <label class="row"><input type="radio" name="action" value="hide" /> Remove them completely</label>
         <label class="row"><input type="radio" name="action" value="dim" /> Fade them out with a label saying why</label>
+      </section>
+
+      <section>
+        <h2>Troubleshooting</h2>
+        <label class="row">
+          <input type="checkbox" id="debug" />
+          <span>
+            <strong>Show LangBlock's reasoning on every video</strong>
+            <small>Adds a small label to each video saying what LangBlock found, and fades hidden videos instead of removing them. A video with no label wasn't recognised by LangBlock. Turn this off when you're done.</small>
+          </span>
+        </label>
       </section>
 
       <section>
