@@ -26,6 +26,7 @@ LangBlock checks each video in two ways, both on your device:
 
 FEATURES
 • Block any number of languages (80+ supported)
+• Also filters playlists, by checking the videos they list
 • Choose where to filter: search, home and feeds, "Up next", channel pages
 • Optionally hide videos that offer a dubbed audio track in a blocked language
 • Hide videos completely, or fade them out with a label saying why

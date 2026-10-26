@@ -20,6 +20,11 @@ The second check matters because YouTube auto-translates titles and auto-dubs au
 - **Stable:** the caption-track and audio-track fields have kept the same shape for over a decade and are relied on by many tools. Card detection uses a list of known YouTube elements, plus a fallback that finds any card linking to a single video. A YouTube layout change therefore degrades gracefully instead of breaking.
 - **Private:** nothing leaves the device except normal requests to YouTube.
 
+### Playlists and language names
+- **Playlist cards** list their first videos. LangBlock checks up to three of them and hides the playlist when at least half of the videos with a known language are in a blocked language. Their titles are also included in the title check.
+- **Language named in the title.** "in Hindi", "(Hindi)", "| Hindi", "Urdu / Hindi" or "Hindi dubbed" count as a signal. This outranks YouTube's spoken-language label, because YouTube may label speech that is almost identical (Hindi and Urdu) as the other language. "Learn Hindi", "Hindi vs Urdu" or "French toast" don't count.
+- **Close languages.** When a blocked language has a near-identical spoken relative (Hindi and Urdu, Malay and Indonesian, Serbian, Croatian and Bosnian), the settings page suggests blocking it too.
+
 ### Known limits
 - Videos without auto-captions or audio-track info (music, very short or brand-new videos) fall back to title and description.
 - Romanized text (Hindi written in Latin letters) is mostly caught by the spoken-language check, not the title check.

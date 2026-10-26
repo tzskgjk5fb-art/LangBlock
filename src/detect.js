@@ -275,18 +275,95 @@
     return null;
   }
 
+  // ---------------------------------------------------------------------
+  // Language named in the title ("in Hindi", "Class 1 - Urdu / Hindi")
+  // ---------------------------------------------------------------------
+
+  function escapeRegExp(text) {
+    return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
+  const nameMatchers = new Map(); // code -> RegExp
+  function nameMatcher(code) {
+    if (nameMatchers.has(code)) return nameMatchers.get(code);
+    const lang = LB.LANGUAGE_BY_CODE[code];
+    let re = null;
+    if (lang) {
+      const names = lang.name.split(" / ").map((n) => escapeRegExp(n.trim()));
+      const name = `(?:${names.join("|")})`;
+      // The name has to be used as a label for the video's language, not as
+      // an adjective: "explained in Hindi", "(Hindi)", "| Hindi", "Hindi /
+      // Urdu", "Hindi dubbed". "Life in Thai prison" or "French toast" don't
+      // count, because a word follows the name.
+      const notWord = "(?!\\s*[\\p{L}\\p{M}])";
+      re = new RegExp(
+        [
+          `\\bin\\s+${name}${notWord}`,
+          `[(\\[|/\\-\u2013\u2014:\u00b7\u2022]\\s*${name}${notWord}`,
+          `\\b${name}\\s*/`,
+          `\\b${name}\\s+(?:dub|dubbed|version|audio)\\b`,
+        ].join("|"),
+        "iu"
+      );
+    }
+    nameMatchers.set(code, re);
+    return re;
+  }
+
   /**
-   * Combine the title verdict with the spoken-language verdict. When YouTube
-   * knows the spoken language it decides: a French title on a video spoken
-   * in English is not a French video. The title only decides when there is
-   * no spoken-language information at all.
+   * A blocked language explicitly named as the video's language in its text.
+   * @returns {{lang:string, source:"name"}|null}
+   */
+  function nameVerdict(text, blocked) {
+    if (!text || !blocked) return null;
+    for (const code of blocked) {
+      const re = nameMatcher(code);
+      if (re && re.test(text)) return { lang: code, source: "name" };
+    }
+    return null;
+  }
+
+  /**
+   * Combine everything we know about a video.
+   * 1. YouTube says it is spoken in a blocked language: hide.
+   * 2. The title names a blocked language ("in Hindi"): hide, even when
+   *    YouTube labels the speech as something close (e.g. Urdu).
+   * 3. YouTube knows the spoken language and it isn't blocked: show. A
+   *    French-looking title on a video spoken in English is not French.
+   * 4. Otherwise the title's detected language decides.
    * @returns {{lang:string, source:string}|null} null = show the video
    */
-  function finalVerdict(fromText, spoken) {
+  function finalVerdict(fromText, spoken, fromName) {
     if (spoken && spoken !== "clear") return spoken;
+    if (fromName) return fromName;
     if (spoken === "clear") return null;
     return fromText || null;
   }
+
+  /**
+   * Spoken-language verdict for a playlist from the verdicts of the videos
+   * it shows. Hidden when at least half of the videos with a known language
+   * are in a blocked language.
+   * @param {Array<{lang:string, source:string}|"clear"|null>} verdicts
+   */
+  function playlistVerdict(verdicts) {
+    const known = verdicts.filter((v) => v !== null && v !== undefined);
+    if (known.length === 0) return null;
+    const hits = known.filter((v) => v !== "clear");
+    return hits.length * 2 >= known.length ? hits[0] : "clear";
+  }
+
+  // Languages that sound almost the same when spoken, so YouTube may label a
+  // video as either. The settings page suggests blocking them together.
+  const RELATED_LANGUAGES = {
+    hi: ["ur"],
+    ur: ["hi"],
+    ms: ["id"],
+    id: ["ms"],
+    sr: ["hr", "bs"],
+    hr: ["sr", "bs"],
+    bs: ["sr", "hr"],
+  };
 
   /**
    * Language from a detectLanguage() result, if the detector is confident.
@@ -377,7 +454,10 @@
     signalsFromPlayerResponse,
     descriptionFromPlayerResponse,
     spokenVerdict,
+    nameVerdict,
     finalVerdict,
+    playlistVerdict,
+    RELATED_LANGUAGES,
     confidentLanguage,
     DEFAULT_SETTINGS,
     sanitizeSettings,

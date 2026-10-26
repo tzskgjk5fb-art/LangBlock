@@ -30,7 +30,28 @@ const VIDEOS = {
   lateHi00001: { title: "Added later", pr: { captions: [["hi", "asr"]] } },
   recycledEn1: { title: "Recycled card", pr: { captions: [["en", "asr"]] } },
   recycledHi1: { title: "Recycled card", pr: { captions: [["hi", "asr"]] } },
+  // playlists
+  plHiVid0001: { title: "Lesson 1", pr: { captions: [["hi", "asr"]] } },
+  plHiVid0002: { title: "Lesson 2", pr: { captions: [["hi", "asr"]] } },
+  plUrVid0001: { title: "Before you Start Learning Premiere Class 1 - Urdu / Hindi", pr: { captions: [["ur", "asr"]] } },
+  plUrVid0002: { title: "Project Window - Premiere Class 2 - Urdu / Hindi", pr: { captions: [["ur", "asr"]] } },
+  plEnVid0001: { title: "Intro to editing", pr: { captions: [["en", "asr"]] } },
+  plEnVid0002: { title: "Cutting basics", pr: { captions: [["en", "asr"]] } },
 };
+
+// A playlist card the way YouTube's newer layout shows it in search: the
+// thumbnail opens the first video in the playlist, and the first two videos
+// are listed under the title.
+function playlistCard(name, title, first, second) {
+  return `<yt-lockup-view-model id="card-${name}" class="card">
+    <a href="/watch?v=${first}&list=PL${name}"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" width="160" height="90"><span>22:18</span></a>
+    <h3><a href="/playlist?list=PL${name}" title="${title}">${title}</a></h3>
+    <div class="yt-content-metadata-view-model__metadata-text">Some Channel · Playlist</div>
+    <a href="/watch?v=${first}&list=PL${name}">${VIDEOS[first].title} · 22:21</a>
+    <a href="/watch?v=${second}&list=PL${name}">${VIDEOS[second].title} · 17:47</a>
+    <a href="/playlist?list=PL${name}">View full playlist</a>
+  </yt-lockup-view-model>`;
+}
 
 function playerResponse({ captions = [], audio = [], desc = "" }) {
   return {
@@ -84,6 +105,9 @@ ${ids.map((id) => card(id)).join("\n")}
   <span>Mystery card layout</span>
 </div>
 ${card("recycledEn1")}
+${playlistCard("plHindi", "Learn editing", "plHiVid0001", "plHiVid0002")}
+${playlistCard("plUrduHindi", "Adobe Premiere Pro CC Course", "plUrVid0001", "plUrVid0002")}
+${playlistCard("plEnglish", "Editing course", "plEnVid0001", "plEnVid0002")}
 </div></ytd-app></body></html>`;
 }
 
@@ -126,12 +150,21 @@ try {
   const extId = new URL(worker.url()).host;
 
   // The settings page opens itself on install. Use it to block Hindi.
-  const options = await context.newPage();
-  await options.goto(`chrome-extension://${extId}/ui/options.html`);
+  // It opens by itself on install; wait for that tab instead of racing it.
+  const optionsUrl = `chrome-extension://${extId}/ui/options.html`;
+  let options = null;
+  for (let i = 0; i < 30 && !options; i++) {
+    options = context.pages().find((p) => p.url().startsWith(optionsUrl)) || null;
+    if (!options) await new Promise((r) => setTimeout(r, 100));
+  }
+  assert.ok(options, "settings page opens on install");
+  await options.waitForLoadState();
   await options.fill("#lang-search", "hin");
   await options.check("#lang-list input[type=checkbox]");
   await options.waitForSelector(".chip");
   assert.equal(await options.textContent(".chip span"), "Hindi");
+  assert.ok(await options.isVisible("#related"), "suggests Urdu when Hindi is blocked");
+  assert.match(await options.textContent("#related"), /Also block Urdu/);
   await options.fill("#lang-search", "");
   await options.screenshot({ path: path.join(shots, "options.png"), fullPage: true });
   assert.ok(await options.isVisible("#donate"), "donation link shown");
@@ -151,6 +184,9 @@ try {
   assert.equal(state.hiDesc00001, "blocked", "Hindi description");
   assert.equal(state.genericHi01, "blocked", "unknown card layout");
   assert.equal(state.recycledEn1, "shown");
+  assert.equal(state.plHindi, "blocked", "playlist of Hindi videos");
+  assert.equal(state.plUrduHindi, "blocked", "playlist whose videos say 'Urdu / Hindi'");
+  assert.equal(state.plEnglish, "shown", "playlist of English videos");
   assert.equal(state.hiTitleEnSp, "shown", "Hindi title but spoken English: spoken language wins");
   assert.equal(state.hiTitleNone, "blocked", "Hindi title, no spoken-language info: title decides");
   assert.equal(await yt.isVisible("#card-hiAsr000001"), false, "blocked card is not displayed");

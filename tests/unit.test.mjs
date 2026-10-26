@@ -150,6 +150,36 @@ test("finalVerdict: spoken language outranks the title", () => {
   assert.equal(LB.finalVerdict(null, "clear"), null);
 });
 
+test("nameVerdict: language named as the video's language", () => {
+  const hi = set("hi");
+  assert.equal(LB.nameVerdict("Premiere Pro Class 1 - Urdu / Hindi 22:21", hi).lang, "hi");
+  assert.equal(LB.nameVerdict("Full tutorial in Hindi", hi).lang, "hi");
+  assert.equal(LB.nameVerdict("iPhone 17 review (Hindi)", hi).lang, "hi");
+  assert.equal(LB.nameVerdict("Hindi/Urdu tutorial", hi).lang, "hi");
+  assert.equal(LB.nameVerdict("Avengers Hindi Dubbed", hi).lang, "hi");
+  assert.equal(LB.nameVerdict("Hindi vs Urdu explained", hi), null);
+  assert.equal(LB.nameVerdict("Learn Hindi fast", hi), null);
+  assert.equal(LB.nameVerdict("French toast recipe", set("fr")), null);
+  assert.equal(LB.nameVerdict("Life in Thai prison", set("th")), null);
+  assert.equal(LB.nameVerdict("Street food | Thai", set("th")).lang, "th");
+});
+
+test("finalVerdict: a named language outranks a spoken 'clear'", () => {
+  const name = { lang: "hi", source: "name" };
+  const spokenHi = { lang: "hi", source: "captions" };
+  assert.deepEqual({ ...LB.finalVerdict(null, "clear", name) }, name);
+  assert.deepEqual({ ...LB.finalVerdict(null, spokenHi, name) }, spokenHi);
+  assert.equal(LB.finalVerdict({ lang: "fr", source: "title" }, "clear", null), null);
+});
+
+test("playlistVerdict: hidden when at least half the known videos are blocked", () => {
+  const hi = { lang: "hi", source: "captions" };
+  assert.deepEqual({ ...LB.playlistVerdict([hi, "clear"]) }, hi);
+  assert.deepEqual({ ...LB.playlistVerdict([hi, null, null]) }, hi);
+  assert.equal(LB.playlistVerdict(["clear", "clear", hi]), "clear");
+  assert.equal(LB.playlistVerdict([null, null]), null);
+});
+
 test("extractPlayerResponse handles partial and full pages", () => {
   const json = JSON.stringify({ a: "x}{\"y", nested: { b: [1, { c: "}" }] } });
   const html = `<html><script>var foo = 1;var ytInitialPlayerResponse = ${json};var meta = {};</script></html>`;

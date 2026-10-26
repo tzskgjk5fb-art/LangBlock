@@ -42,6 +42,35 @@
     $("no-langs").hidden = settings.blocked.length > 0;
   }
 
+  // Suggest languages that sound almost the same as a blocked one (Hindi and
+  // Urdu), since YouTube may label a video as either.
+  function renderRelated() {
+    const box = $("related");
+    if (!box) return;
+    box.replaceChildren();
+    const blockedSet = new Set(settings.blocked);
+    const pairs = [];
+    for (const code of settings.blocked) {
+      for (const other of LB.RELATED_LANGUAGES[code] || []) {
+        if (!blockedSet.has(other) && !pairs.some((p) => p.other === other)) pairs.push({ code, other });
+      }
+    }
+    box.hidden = pairs.length === 0;
+    for (const { code, other } of pairs) {
+      const row = el("p", { className: "hint" });
+      row.append(
+        `Spoken ${LB.languageName(code)} and ${LB.languageName(other)} are very close, and YouTube may label a video as either. `
+      );
+      const add = el("button", { type: "button", className: "link" }, `Also block ${LB.languageName(other)}`);
+      add.addEventListener("click", () => {
+        settings.blocked = [...new Set([...settings.blocked, other])];
+        save();
+      });
+      row.append(add);
+      box.append(row);
+    }
+  }
+
   function renderList() {
     const list = $("lang-list");
     const q = $("lang-search").value.trim().toLowerCase();
@@ -77,6 +106,7 @@
     $("enabled").checked = settings.enabled;
     document.body.classList.toggle("is-off", !settings.enabled);
     renderChips();
+    renderRelated();
     renderList();
     for (const box of document.querySelectorAll("[data-surface]")) {
       box.checked = !!settings.surfaces[box.dataset.surface];
