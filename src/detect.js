@@ -365,14 +365,26 @@
     return [...names].filter((n) => !/\p{Script=Latin}/u.test(n));
   }
 
-  const nameMatchers = new Map(); // code -> { label, native, anywhere } RegExps
+  // Names that only ever mean the language. "Hindi song", "Bangla Tutorial"
+  // and "Tutorial Hindi (2026)" are all Hindi or Bangla videos, so these
+  // count wherever they stand. Names that double as everyday adjectives
+  // ("French toast", "Korean BBQ", "Tamil Nadu", "Punjabi food") don't.
+  const ALWAYS_THE_LANGUAGE = new Set(
+    ["Hindi", "Hinglish", "Urdu", "Bangla", "Malayalam", "Telugu", "Kannada", "Marathi", "Odia", "Oriya",
+      "Assamese", "Pashto", "Sinhala", "Tagalog", "Swahili", "Kiswahili", "Farsi", "Amharic"].map((n) => n.toLowerCase())
+  );
+
+  const nameMatchers = new Map(); // code -> { label, native, always, anywhere } RegExps
   function nameMatcher(code) {
     if (nameMatchers.has(code)) return nameMatchers.get(code);
     const lang = LB.LANGUAGE_BY_CODE[code];
     let re = null;
     if (lang) {
-      const names = lang.name.split(" / ").map((n) => escapeRegExp(n.trim()));
+      const plain = [...lang.name.split(" / "), ...(lang.alt || [])].map((n) => n.trim());
+      const names = plain.map(escapeRegExp);
       const name = `(?:${names.join("|")})`;
+      const alwaysNames = plain.filter((n) => ALWAYS_THE_LANGUAGE.has(n.toLowerCase())).map(escapeRegExp);
+      const always = alwaysNames.length ? new RegExp(`\\b(?:${alwaysNames.join("|")})\\b`, "iu") : null;
       // The name has to be used as a label for the video's language, not as
       // an adjective: "explained in Hindi", "(Hindi)", "| Hindi", "Hindi /
       // Urdu", "Hindi dubbed". "Life in Thai prison" or "French toast" don't
@@ -397,7 +409,7 @@
       // "Basics Malayalam Tutorial" next to Malayalam script: the name counts
       // anywhere when the text is also written in that language's script.
       const anywhere = lang.script !== "Latin" ? new RegExp(`\\b${name}\\b`, "iu") : null;
-      re = { label: re, native, anywhere, script: lang.script };
+      re = { label: re, native, always, anywhere, script: lang.script };
     }
     nameMatchers.set(code, re);
     return re;
@@ -413,7 +425,9 @@
     for (const code of blocked) {
       const m = nameMatcher(code);
       if (!m) continue;
-      if (m.label.test(text) || (m.native && m.native.test(text))) return { lang: code, source: "name" };
+      if (m.label.test(text) || (m.native && m.native.test(text)) || (m.always && m.always.test(text))) {
+        return { lang: code, source: "name" };
+      }
       if (m.anywhere && m.anywhere.test(text)) {
         scripts ||= analyzeScripts(text).counts;
         if ((scripts[m.script] || 0) >= SCRIPT_MIN_LETTERS) return { lang: code, source: "name" };

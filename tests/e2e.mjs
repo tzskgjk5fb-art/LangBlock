@@ -30,6 +30,7 @@ const VIDEOS = {
   },
   genericHi01: { title: "Mystery card layout", pr: { captions: [["hi", "asr"]] } },
   lateHi00001: { title: "Added later", pr: { captions: [["hi", "asr"]] } },
+  flakyHi0001: { title: "Weekend cooking vlog", pr: { captions: [["hi", "asr"]] } },
   recycledEn1: { title: "Recycled card", pr: { captions: [["en", "asr"]] } },
   recycledHi1: { title: "Recycled card", pr: { captions: [["hi", "asr"]] } },
   // playlists
@@ -148,6 +149,10 @@ try {
     if (url.pathname === "/watch") {
       const id = url.searchParams.get("v");
       watchCalls.push(id);
+      // The first check of this video fails, as on a flaky connection.
+      if (id === "flakyHi0001" && watchCalls.filter((v) => v === id).length === 1) {
+        return route.fulfill({ status: 503, body: "busy" });
+      }
       return route.fulfill({ contentType: "text/html; charset=utf-8", body: watchPage(id) });
     }
     return route.fulfill({ contentType: "text/html", body: "<html><body>home</body></html>" });
@@ -205,6 +210,15 @@ try {
   await yt.waitForTimeout(400);
   await waitSettled(yt);
   assert.equal((await hiddenState(yt)).lateHi00001, "blocked", "card added later");
+
+  // A check that fails is tried once more about 20 seconds later
+  await yt.evaluate((html) => document.getElementById("contents").insertAdjacentHTML("beforeend", html), card("flakyHi0001"));
+  await yt.waitForFunction(
+    () => document.getElementById("card-flakyHi0001")?.getAttribute("data-langblock") === "blocked",
+    null,
+    { timeout: 40000 }
+  );
+  assert.equal(watchCalls.filter((v) => v === "flakyHi0001").length, 2, "failed check retried once");
 
   // YouTube reuses card elements: swap a shown card's link to a Hindi video
   await yt.evaluate(() => {

@@ -20,7 +20,7 @@
   // can be searched by.
   const sortedLanguages = LB.LANGUAGES.map((l) => {
     const local = capitalize(LB.localName(l.code));
-    return { code: l.code, name: local, search: [local, l.name].map(fold) };
+    return { code: l.code, name: local, search: [local, l.name, ...(l.alt || [])].map(fold) };
   }).sort((a, b) => a.name.localeCompare(b.name, LB.UI_LOCALE));
   const displayName = (code) => {
     const lang = sortedLanguages.find((l) => l.code === code);

@@ -1,7 +1,8 @@
 // Languages LangBlock can block. `code` is the ISO 639-1 code (or the code
 // YouTube and the browser's language detector use). `script` is the main
 // writing system, used by the offline script check when the browser has no
-// built-in language detector.
+// built-in language detector. `alt` are other English names ("Bangla"),
+// `native` other spellings of the language's own name ("हिंदी").
 (function (root) {
   "use strict";
 
@@ -13,7 +14,7 @@
     { code: "az", name: "Azerbaijani", script: "Latin" },
     { code: "be", name: "Belarusian", script: "Cyrillic" },
     { code: "bg", name: "Bulgarian", script: "Cyrillic" },
-    { code: "bn", name: "Bengali", script: "Bengali" },
+    { code: "bn", name: "Bengali", script: "Bengali", alt: ["Bangla"] },
     { code: "bs", name: "Bosnian", script: "Latin" },
     { code: "ca", name: "Catalan", script: "Latin" },
     { code: "cs", name: "Czech", script: "Latin" },
@@ -25,7 +26,7 @@
     { code: "es", name: "Spanish", script: "Latin" },
     { code: "et", name: "Estonian", script: "Latin" },
     { code: "eu", name: "Basque", script: "Latin" },
-    { code: "fa", name: "Persian", script: "Arabic" },
+    { code: "fa", name: "Persian", script: "Arabic", alt: ["Farsi"] },
     { code: "fi", name: "Finnish", script: "Latin" },
     { code: "fil", name: "Filipino / Tagalog", script: "Latin", aliases: ["tl"] },
     { code: "fr", name: "French", script: "Latin" },
@@ -34,11 +35,11 @@
     { code: "gu", name: "Gujarati", script: "Gujarati" },
     { code: "ha", name: "Hausa", script: "Latin" },
     { code: "he", name: "Hebrew", script: "Hebrew", aliases: ["iw"] },
-    { code: "hi", name: "Hindi", script: "Devanagari", native: ["हिंदी"] },
+    { code: "hi", name: "Hindi", script: "Devanagari", native: ["हिंदी"], alt: ["Hinglish"] },
     { code: "hr", name: "Croatian", script: "Latin" },
     { code: "hu", name: "Hungarian", script: "Latin" },
     { code: "hy", name: "Armenian", script: "Armenian" },
-    { code: "id", name: "Indonesian", script: "Latin", aliases: ["in"] },
+    { code: "id", name: "Indonesian", script: "Latin", aliases: ["in"], alt: ["Bahasa Indonesia"] },
     { code: "ig", name: "Igbo", script: "Latin" },
     { code: "is", name: "Icelandic", script: "Latin" },
     { code: "it", name: "Italian", script: "Latin" },
@@ -57,27 +58,27 @@
     { code: "ml", name: "Malayalam", script: "Malayalam" },
     { code: "mn", name: "Mongolian", script: "Cyrillic" },
     { code: "mr", name: "Marathi", script: "Devanagari" },
-    { code: "ms", name: "Malay", script: "Latin" },
+    { code: "ms", name: "Malay", script: "Latin", alt: ["Bahasa Melayu"] },
     { code: "my", name: "Burmese", script: "Myanmar" },
     { code: "ne", name: "Nepali", script: "Devanagari" },
     { code: "nl", name: "Dutch", script: "Latin" },
     { code: "no", name: "Norwegian", script: "Latin", aliases: ["nb", "nn"] },
-    { code: "or", name: "Odia", script: "Oriya" },
-    { code: "pa", name: "Punjabi", script: "Gurmukhi", native: ["پنجابی"] },
+    { code: "or", name: "Odia", script: "Oriya", alt: ["Oriya"] },
+    { code: "pa", name: "Punjabi", script: "Gurmukhi", native: ["پنجابی"], alt: ["Panjabi"] },
     { code: "pl", name: "Polish", script: "Latin" },
     { code: "ps", name: "Pashto", script: "Arabic" },
     { code: "pt", name: "Portuguese", script: "Latin" },
     { code: "ro", name: "Romanian", script: "Latin" },
     { code: "ru", name: "Russian", script: "Cyrillic" },
     { code: "sd", name: "Sindhi", script: "Arabic" },
-    { code: "si", name: "Sinhala", script: "Sinhala" },
+    { code: "si", name: "Sinhala", script: "Sinhala", alt: ["Sinhalese"] },
     { code: "sk", name: "Slovak", script: "Latin" },
     { code: "sl", name: "Slovenian", script: "Latin" },
     { code: "so", name: "Somali", script: "Latin" },
     { code: "sq", name: "Albanian", script: "Latin" },
     { code: "sr", name: "Serbian", script: "Cyrillic" },
     { code: "sv", name: "Swedish", script: "Latin" },
-    { code: "sw", name: "Swahili", script: "Latin" },
+    { code: "sw", name: "Swahili", script: "Latin", alt: ["Kiswahili"] },
     { code: "ta", name: "Tamil", script: "Tamil" },
     { code: "te", name: "Telugu", script: "Telugu" },
     { code: "tg", name: "Tajik", script: "Cyrillic" },
@@ -88,7 +89,7 @@
     { code: "uz", name: "Uzbek", script: "Latin" },
     { code: "vi", name: "Vietnamese", script: "Latin" },
     { code: "yo", name: "Yoruba", script: "Latin" },
-    { code: "zh", name: "Chinese", script: "Han" },
+    { code: "zh", name: "Chinese", script: "Han", alt: ["Mandarin"] },
     { code: "zu", name: "Zulu", script: "Latin" },
   ];
 

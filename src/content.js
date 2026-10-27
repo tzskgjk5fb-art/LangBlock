@@ -85,6 +85,7 @@
   const MAX_CONCURRENT = 2;
   const MAX_PLAYLIST_VIDEOS = 3; // videos checked per playlist card
   const FETCH_TIMEOUT_MS = 15000;
+  const RETRY_DELAY_MS = 20000;
   const MAX_HTML_BYTES = 4 * 1024 * 1024;
 
   // -------------------------------------------------------------------
@@ -98,7 +99,8 @@
   const queue = []; // video ids waiting for a deep check
   const queued = new Set();
   const inFlight = new Set();
-  const failed = new Set(); // ids that errored this page load; not retried until reload
+  const failed = new Set(); // ids that errored twice this page load; not retried until reload
+  const attempts = new Map(); // id -> failed attempts so far
   let pausedUntil = 0;
 
   // -------------------------------------------------------------------
@@ -482,15 +484,24 @@
         .then(async (sig) => {
           if (sig === "retry") setTimeout(() => enqueue(id), 0);
           else if (sig) await putCached(id, sig);
-          else failed.add(id);
+          else retryLater(id);
         })
-        .catch(() => failed.add(id))
+        .catch(() => retryLater(id))
         .finally(() => {
           inFlight.delete(id);
           reevaluateId(id);
           pump();
         });
     }
+  }
+
+  // A check can fail on a slow connection or a hiccup at YouTube's end, so
+  // give it one more go a little later before giving up on it.
+  function retryLater(id) {
+    const n = (attempts.get(id) || 0) + 1;
+    attempts.set(id, n);
+    if (n >= 2) failed.add(id);
+    else setTimeout(() => enqueue(id), RETRY_DELAY_MS);
   }
 
   // Reads the watch page as a stream and stops as soon as the embedded player
@@ -595,6 +606,7 @@
     if (area === "local" && changes[LB.storage.CACHE_CLEARED_KEY]) {
       signals.clear();
       failed.clear();
+      attempts.clear();
       rescanAll();
     }
   });

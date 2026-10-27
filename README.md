@@ -12,7 +12,7 @@ Each video card goes through two checks. Both run in your browser and need no AP
    - the language of the **auto-generated caption track** (`captionTracks[].kind == "asr"`), which is YouTube's own speech recognition naming the spoken language;
    - the language of a video's only audio track. This is whatever the uploader picked and is sometimes wrong, so it counts only when there are no auto-captions.
 
-   If none of these exists, the full description is run through the language detector. The page is read as a stream and the download stops as soon as the player data is complete. Only cards near the screen are checked, two at a time, and the results are cached on the device (60 days, or 3 days when nothing was found).
+   If none of these exists, the full description is run through the language detector. The page is read as a stream and the download stops as soon as the player data is complete. A check that fails is tried once more 20 seconds later. Only cards near the screen are checked, two at a time, and the results are cached on the device (60 days, or 3 days when nothing was found).
 
 The second check matters because YouTube auto-translates titles and auto-dubs audio, so a Hindi video can show an English title.
 
@@ -23,7 +23,7 @@ The second check matters because YouTube auto-translates titles and auto-dubs au
 
 ### Playlists and language names
 - **Playlist cards** list their first videos. LangBlock checks up to three of them and hides the playlist when at least half of the videos with a known language are in a blocked language. Their titles are also included in the title check.
-- **Language named in the title.** "in Hindi", "(Hindi)", "| Hindi", "Urdu / Hindi" or "Hindi dubbed" count as a signal. So does a language's own name in its own script anywhere in the text ("اردو / हिंदी", "മലയാളം", "【中文】", but not "中文字幕"), and an English name anywhere when the text is also written in that language's script ("… | Basics Malayalam Tutorial" next to Malayalam). This outranks YouTube's spoken-language label, because that label isn't always right. "Learn Hindi", "Hindi vs Urdu" or "French toast" on their own don't count.
+- **Language named in the title.** "in Hindi", "(Hindi)", "| Hindi", "Urdu / Hindi" or "Hindi dubbed" count as a signal. So does a language's own name in its own script anywhere in the text ("اردو / हिंदी", "മലയാളം", "【中文】", but not "中文字幕"), and an English name anywhere when the text is also written in that language's script ("… | Basics Malayalam Tutorial" next to Malayalam). Names that only ever mean the language (Hindi, Urdu, Bangla, Malayalam, Telugu, Kannada, Marathi and a few more) count wherever they stand, so "Premiere Pro Tutorial Hindi (2026)" and "Bangla Tutorial" are caught. Names that double as everyday adjectives only count in those label positions, so "French toast", "Korean BBQ" or "Exploring Tamil Nadu" don't. Common alternative names count too: Bangla, Farsi, Hinglish, Mandarin, Oriya, Sinhalese, Kiswahili. All of this outranks YouTube's spoken-language label, because that label isn't always right.
 
 ### Picking languages
 Tick languages in the list, or use "Block all except English" (named after the browser's language) to block every language LangBlock knows except yours, and "Unblock all" to clear the list. Individual languages can still be ticked or unticked afterwards, and both buttons offer Undo.

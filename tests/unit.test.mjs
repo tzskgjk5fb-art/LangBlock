@@ -189,11 +189,23 @@ test("nameVerdict: language named as the video's language", () => {
   assert.equal(LB.nameVerdict("iPhone 17 review (Hindi)", hi).lang, "hi");
   assert.equal(LB.nameVerdict("Hindi/Urdu tutorial", hi).lang, "hi");
   assert.equal(LB.nameVerdict("Avengers Hindi Dubbed", hi).lang, "hi");
-  assert.equal(LB.nameVerdict("Hindi vs Urdu explained", hi), null);
-  assert.equal(LB.nameVerdict("Learn Hindi fast", hi), null);
+  assert.equal(LB.nameVerdict("Learn French fast", set("fr")), null);
+  assert.equal(LB.nameVerdict("Korean BBQ at home", set("ko")), null);
+  assert.equal(LB.nameVerdict("Exploring Tamil Nadu", set("ta")), null);
   assert.equal(LB.nameVerdict("French toast recipe", set("fr")), null);
   assert.equal(LB.nameVerdict("Life in Thai prison", set("th")), null);
   assert.equal(LB.nameVerdict("Street food | Thai", set("th")).lang, "th");
+});
+
+test("names that only mean the language count anywhere", () => {
+  const hi = set("hi");
+  assert.equal(LB.nameVerdict("Adobe Premiere Pro Beginner Tutorial Hindi (2026) | Everything You NEED to KNOW", hi).lang, "hi");
+  assert.equal(LB.nameVerdict("Learn Hindi fast", hi).lang, "hi");
+  assert.equal(LB.nameVerdict("New Hinglish comedy sketch", hi).lang, "hi");
+  assert.equal(LB.nameVerdict("Adobe Premiere Pro CC Bangla Tutorial", set("bn")).lang, "bn", "Bangla is Bengali");
+  assert.equal(LB.nameVerdict("Premiere Pro Basic Video Editing | Easy Method | Malayalam", set("ml")).lang, "ml");
+  assert.equal(LB.nameVerdict("Dhaka to Bangladesh border trip", set("bn")), null, "Bangladesh isn't Bangla");
+  assert.equal(LB.nameVerdict("Hindi songs", set("ur")), null, "only the blocked language");
 });
 
 test("finalVerdict: a named language outranks a spoken 'clear'", () => {
@@ -281,9 +293,8 @@ test("a language's own name in its own script counts as a label", () => {
 });
 
 test("a language's English name counts anywhere next to its own script", () => {
-  const ml = "ഇതിലും എളുപ്പത്തിൽ Premiere Pro പഠിക്കാൻ പറ്റില്ല | Basics Malayalam Tutorial | beginners";
-  assert.equal(LB.nameVerdict(ml, set("ml")).lang, "ml");
-  assert.equal(LB.nameVerdict("Basics Malayalam Tutorial | beginners", set("ml")), null, "no Malayalam script");
+  assert.equal(LB.nameVerdict("எளிய வழியில் Premiere Pro கற்றுக்கொள்ளுங்கள் | Basics Tamil Tutorial", set("ta")).lang, "ta");
+  assert.equal(LB.nameVerdict("Basics Tamil Tutorial | beginners", set("ta")), null, "no Tamil script");
 });
 
 test("a title mostly in a blocked script outweighs YouTube's English label", () => {
