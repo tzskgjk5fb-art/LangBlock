@@ -33,9 +33,12 @@ try {
   const page = await ctx.newPage();
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto(`chrome-extension://${id}/ui/options.html`);
-  await page.fill("#lang-search", "hindi");
-  await page.check("#lang-list input[type=checkbox]");
+  for (const name of ["hindi", "urdu"]) {
+    await page.fill("#lang-search", name);
+    await page.check("#lang-list input[type=checkbox]");
+  }
   await page.fill("#lang-search", "");
+  await page.evaluate(() => document.activeElement.blur());
   await page.waitForTimeout(300);
   await page.screenshot({ path: path.join(out, "screenshot-settings-1280x800.png") });
 } finally {
