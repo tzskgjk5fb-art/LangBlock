@@ -234,6 +234,58 @@ test("extractPlayerResponse handles partial and full pages", () => {
   assert.equal(LB.extractPlayerResponse("<html>nothing</html>").status, "missing");
 });
 
+test("extractPlayerResponse reads a page arriving in small pieces", () => {
+  const json = JSON.stringify({ a: 'x}{"y\\', nested: { b: [1, { c: "}" }] } });
+  const html = `<html><script>var ytInitialPlayerResponse = ${json};var meta = {};</script></html>`;
+  for (const step of [1, 2, 7, 64]) {
+    const state = {};
+    let r = null;
+    for (let n = step; n < html.length + step && (!r || r.status !== "found"); n += step) {
+      r = LB.extractPlayerResponse(html.slice(0, n), state);
+    }
+    assert.equal(r.status, "found", `pieces of ${step}`);
+    assert.equal(r.data.a, 'x}{"y\\');
+    assert.equal(r.data.nested.b[1].c, "}");
+  }
+});
+
+test("tags and hashtags: which languages they name", () => {
+  const pr = {
+    videoDetails: {
+      keywords: ["premiere pro tutorial", "premiere pro tutorial in hindi", "video editing"],
+      shortDescription: "Hey everyone! Assignments below.\n#premierepro #videoediting #hindi",
+    },
+  };
+  const text = LB.tagTextFromPlayerResponse(pr);
+  assert.match(text, /in hindi/);
+  assert.match(text, /#hindi/);
+  assert.deepEqual([...LB.namedLanguages(text)], ["hi"]);
+  assert.deepEqual([...LB.namedLanguages("हिंदी, video editing")], ["hi"]);
+  // Everyday words stay strict, as in titles
+  assert.deepEqual([...LB.namedLanguages("french toast, korean bbq, learn french, tamil nadu, english")], []);
+  assert.deepEqual([...LB.namedLanguages("#premiereprohindi #videoediting")], []);
+  assert.deepEqual([...LB.namedLanguages(LB.tagTextFromPlayerResponse({}))], []);
+});
+
+test("spokenVerdict: tags naming a blocked language beat YouTube's English label", () => {
+  const tags = (sig) => ({ o: null, a: [], s: [], d: null, ...sig });
+  // Hinglish video labelled English, tagged "in hindi"
+  assert.deepEqual({ ...LB.spokenVerdict(tags({ s: ["en"], n: ["hi"] }), set("hi")) }, { lang: "hi", source: "tags" });
+  // A lone English audio track label too
+  assert.deepEqual({ ...LB.spokenVerdict(tags({ a: ["en"], n: ["hi"] }), set("hi")) }, { lang: "hi", source: "tags" });
+  // No spoken language at all
+  assert.deepEqual({ ...LB.spokenVerdict(tags({ n: ["hi", "en"] }), set("hi")) }, { lang: "hi", source: "tags" });
+  // Not over a spoken language other than English
+  assert.equal(LB.spokenVerdict(tags({ s: ["ta"], n: ["hi"] }), set("hi")), "clear");
+  // Not over the original audio track among several
+  assert.equal(LB.spokenVerdict(tags({ o: "en", a: ["en", "hi"], n: ["hi"] }), set("hi")), "clear");
+  // Tags naming many languages are search bait
+  assert.equal(LB.spokenVerdict(tags({ s: ["en"], n: ["hi", "ta", "te"] }), set("hi")), "clear");
+  // Old cache entries without tags
+  assert.equal(LB.spokenVerdict(tags({ s: ["en"], n: null }), set("hi")), "clear");
+  assert.equal(LB.spokenVerdict(tags({ s: ["en"], n: ["hi"] }), set("ta")), "clear");
+});
+
 test("videoIdFromHref", () => {
   assert.equal(LB.videoIdFromHref("/watch?v=dQw4w9WgXcQ&t=10s"), "dQw4w9WgXcQ");
   assert.equal(LB.videoIdFromHref("/shorts/abcdefghijk"), "abcdefghijk");

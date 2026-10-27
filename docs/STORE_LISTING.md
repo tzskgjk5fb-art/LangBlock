@@ -20,8 +20,9 @@ Chrome / Edge: Productivity (or "Fun" / "Social & Communication"). Firefox: Sear
 LangBlock hides YouTube videos in languages you don't want to see. Pick the languages to block (for example Hindi), and matching videos disappear from search results, the home page, your feeds, the "Up next" list and channel pages.
 
 HOW IT WORKS
-LangBlock checks each video on your device, using three signals:
+LangBlock checks each video on your device, using four signals:
 • Spoken language: LangBlock reads the spoken language YouTube itself has recorded for the video, namely the language of its automatic captions and its original audio track. This catches videos whose titles are in English or were auto-translated by YouTube. Each video is checked once and the answer is remembered on your device.
+• Tags: when the uploader tagged the video with a blocked language ("tutorial in hindi", "#hindi"), it is hidden even if YouTube labels it English. Many videos that mix Hindi and English are only caught this way.
 • Language named in the title: titles such as "Hindi tutorial", "(Hindi)", "Urdu / Hindi", "Bangla Tutorial" or the language's own name in its own script ("اردو / हिंदी") count, even when YouTube labels the video differently. Names that are also everyday words, like "French toast" or "Korean BBQ", don't.
 • Title check: your browser's built-in language detector and a writing-system check read the title, so obvious matches (for example a title written in Devanagari) are hidden instantly. When YouTube knows the spoken language, that wins, so a French title on a video spoken in English stays visible. The exception is YouTube's default "English" label, which many videos in other languages carry: a title written largely in a blocked language's own script outweighs it.
 
@@ -46,7 +47,7 @@ PERMISSIONS, AND EXACTLY WHAT EACH ONE DOES
 LangBlock asks for nothing else: no access to your tabs, browsing history, cookies, downloads or other sites.
 
 LIMITS
-No language filter is perfect. Videos without captions or audio-track information (often music or brand-new videos) are judged by their title and description only, and short titles in the Latin alphabet only count when their language is clear. Videos in languages that share a writing system (for example Hindi and Marathi) are told apart by the browser's language detector. If something is hidden or shown wrongly, turn on troubleshooting mode to see why.
+No language filter is perfect. Videos without captions or audio-track information (often music or brand-new videos) are judged by their title and description only, and short titles in the Latin alphabet only count when their language is clear. Videos in languages that share a writing system (for example Hindi and Marathi) are told apart by the browser's language detector. A video whose title, tags and YouTube label all say English is shown, because LangBlock can't listen to the audio. If something is hidden or shown wrongly, turn on troubleshooting mode to see why.
 
 ---
 

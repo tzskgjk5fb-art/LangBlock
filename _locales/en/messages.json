@@ -260,5 +260,9 @@
   "whyDescription": {
     "message": "description",
     "description": "Reason: the video's description."
+  },
+  "whyTags": {
+    "message": "tags",
+    "description": "Reason: the tags or hashtags the uploader gave the video."
   }
 }

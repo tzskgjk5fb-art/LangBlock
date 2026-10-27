@@ -227,5 +227,8 @@
   },
   "whyDescription": {
     "message": "opis"
+  },
+  "whyTags": {
+    "message": "tagi"
   }
 }

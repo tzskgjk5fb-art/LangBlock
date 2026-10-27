@@ -82,10 +82,14 @@
 
   const CACHE_TTL_KNOWN = 60 * 24 * 3600 * 1000; // 60 days: a video's language doesn't change
   const CACHE_TTL_UNKNOWN = 3 * 24 * 3600 * 1000; // 3 days: captions may appear later
-  const MAX_CONCURRENT = 2;
+  const CACHE_TTL_UNPLAYABLE = 3600 * 1000; // 1 hour: YouTube held back the details
+  const MAX_CONCURRENT = 3;
   const MAX_PLAYLIST_VIDEOS = 3; // videos checked per playlist card
-  const FETCH_TIMEOUT_MS = 15000;
-  const RETRY_DELAY_MS = 20000;
+  const STALL_TIMEOUT_MS = 10000; // give up on a page that sends nothing for this long
+  const FETCH_TIMEOUT_MS = 30000; // or that takes longer than this in all
+  // Waits before trying a failed check again. After the last one the video is
+  // left alone until the next YouTube page.
+  const RETRY_DELAYS_MS = [2000, 8000, 30000, 90000];
   const MAX_HTML_BYTES = 4 * 1024 * 1024;
 
   // -------------------------------------------------------------------
@@ -96,11 +100,16 @@
   let blocked = new Set();
   const signals = new Map(); // videoId -> cached language signals
   const tokens = new WeakMap(); // card -> evaluation counter, to drop stale async results
-  const queue = []; // video ids waiting for a deep check
+  const queue = []; // video ids waiting for a deep check, oldest first
   const queued = new Set();
   const inFlight = new Set();
-  const failed = new Set(); // ids that errored twice this page load; not retried until reload
-  const attempts = new Map(); // id -> failed attempts so far
+  const onScreen = new Set(); // ids of waiting cards that are on screen now; checked first
+  const failed = new Set(); // ids whose every try failed; tried again on the next YouTube page
+  const attempts = new Map(); // id -> failed tries so far
+  const waiting = new Set(); // ids waiting a moment before their next try
+  const lastError = new Map(); // id -> why the last try failed, for the troubleshooting label
+  const refreshing = new Set(); // ids remembered by an older version, checked again once
+  const seenText = new WeakMap(); // card -> its text when last evaluated
   let pausedUntil = 0;
 
   // -------------------------------------------------------------------
@@ -244,7 +253,11 @@
   // -------------------------------------------------------------------
 
   function mark(card, state, verdict) {
-    if (state !== "pending") visibility.unobserve(card);
+    if (state !== "pending") {
+      visibility.unobserve(card);
+      screenWatch.unobserve(card);
+      for (const id of cardIds(card)) onScreen.delete(id);
+    }
     if (state === null) {
       card.removeAttribute("data-langblock");
       card.removeAttribute("data-langblock-why");
@@ -260,6 +273,7 @@
         captions: "whySpoken",
         dub: "whyDub",
         description: "whyDescription",
+        tags: "whyTags",
       };
       const name = LB.localName(verdict.lang);
       const why = how[verdict.source] ? `${name} (${LB.t(how[verdict.source])})` : name;
@@ -272,11 +286,24 @@
   // Troubleshooting label: what LangBlock found for this card.
   function describeSignals(sig) {
     if (!sig) return "not checked";
-    if (sig.o) return `${LB.languageName(sig.o)} (original audio track)`;
-    if (sig.s.length) return `${LB.languageName(sig.s[0])} (auto-captions)`;
-    if (sig.a.length === 1) return `${LB.languageName(sig.a[0])} (audio track label)`;
-    if (sig.d) return `${LB.languageName(sig.d)} (description)`;
-    return "no language info from YouTube";
+    let tags = "";
+    if (sig.n && sig.n.length) {
+      tags = sig.n.length > LB.MAX_TAGGED_LANGUAGES
+        ? `, tags name ${sig.n.length} languages (ignored)`
+        : `, tags name ${sig.n.map(LB.languageName).join(" and ")}`;
+    }
+    if (sig.o) return `${LB.languageName(sig.o)} (original audio track)${tags}`;
+    if (sig.s.length) return `${LB.languageName(sig.s[0])} (auto-captions)${tags}`;
+    if (sig.a.length === 1) return `${LB.languageName(sig.a[0])} (audio track label)${tags}`;
+    if (sig.d) return `${LB.languageName(sig.d)} (description)${tags}`;
+    if (sig.u) return `YouTube held back the details, will look again later${tags}`;
+    return `no language info from YouTube${tags}`;
+  }
+
+  function describeWaiting(id) {
+    if (failed.has(id)) return `check failed (${lastError.get(id) || "unknown error"}), will try again on the next page`;
+    const n = attempts.get(id);
+    return n ? `checking, try ${n + 1} of ${RETRY_DELAYS_MS.length + 1} (last: ${lastError.get(id)})` : "checking";
   }
 
   function describeDetection(text, detection) {
@@ -311,8 +338,12 @@
   async function evaluate(card, ids, key) {
     const token = (tokens.get(card) || 0) + 1;
     tokens.set(card, token);
+    if (card.getAttribute("data-lb-key") !== key) for (const id of cardIds(card)) onScreen.delete(id);
     card.setAttribute("data-lb-ids", ids.join(" "));
     card.setAttribute("data-lb-key", key);
+    const isPlaylist = ids.length !== 1;
+    const { text, title } = cardText(card, isPlaylist);
+    seenText.set(card, text);
 
     if (!filteringActive()) {
       mark(card, null);
@@ -320,8 +351,6 @@
       return;
     }
 
-    const isPlaylist = ids.length !== 1;
-    const { text, title } = cardText(card, isPlaylist);
     const detection = await detect(text);
     if (tokens.get(card) !== token) return;
 
@@ -352,15 +381,16 @@
     const spokenEach = sigs.map((sig) => (sig ? LB.spokenVerdict(sig, blocked, settings) : null));
     const spoken = isPlaylist ? LB.playlistVerdict(spokenEach) : spokenEach[0];
     const unknown = ids.filter((id, i) => !sigs[i] && !failed.has(id));
-    info.spoken = ids
-      .map((id, i) => (sigs[i] ? describeSignals(sigs[i]) : failed.has(id) ? "check failed" : "checking"))
-      .join("; ");
+    info.spoken = ids.map((id, i) => (sigs[i] ? describeSignals(sigs[i]) : describeWaiting(id))).join("; ");
 
     if (unknown.length === 0) {
       const outweighs = !!fromText && LB.titleOutweighsEnglish(title, fromText.lang, sigs);
       const v = LB.finalVerdict(fromText, spoken, fromName, outweighs);
       if (outweighs && v === fromText) info.note = "title outweighs YouTube's English label";
       decide(v ? "blocked" : null, v);
+      // Remembered by a version that didn't read tags yet: look once more
+      // when the card comes near the screen.
+      if (!v && sigs.some((sig) => sig && sig.n === null)) visibility.observe(card);
       return;
     }
     // Still waiting for some videos. Hide straight away if what we know so
@@ -373,6 +403,9 @@
       return;
     }
     decide("pending", null);
+    // Rewatch from scratch, so the observers report the card's current ids.
+    screenWatch.unobserve(card);
+    screenWatch.observe(card);
     if (settings.hideUntilChecked) unknown.forEach(enqueue);
     else visibility.observe(card);
   }
@@ -381,6 +414,17 @@
     return (card.getAttribute("data-lb-ids") || "").split(" ").filter(Boolean);
   }
 
+  // Which waiting cards are on screen right now, so those are checked first.
+  // Created before `visibility`, so it hears about a card first.
+  const screenWatch = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      for (const id of cardIds(entry.target)) {
+        if (entry.isIntersecting) onScreen.add(id);
+        else onScreen.delete(id);
+      }
+    }
+  });
+
   // Deep checks only run for cards near the screen, so scrolling past a long
   // list doesn't cost a request per video.
   const visibility = new IntersectionObserver(
@@ -388,12 +432,17 @@
       for (const entry of entries) {
         if (!entry.isIntersecting) continue;
         visibility.unobserve(entry.target);
-        if (entry.target.getAttribute("data-langblock") !== "pending") continue;
-        cardIds(entry.target).forEach(enqueue);
+        const state = entry.target.getAttribute("data-langblock");
+        if (state === "pending") cardIds(entry.target).forEach(enqueue);
+        else if (!state) cardIds(entry.target).forEach((id) => signals.get(id)?.n === null && refresh(id));
       }
     },
     { rootMargin: "800px 0px" }
   );
+
+  function cardWith(id) {
+    return document.querySelector(`[data-lb-ids~="${CSS.escape(id)}"]`);
+  }
 
   function reevaluateId(id) {
     for (const card of document.querySelectorAll(`[data-lb-ids~="${CSS.escape(id)}"]`)) {
@@ -416,13 +465,16 @@
     }
     if (!entry || typeof entry !== "object" || typeof entry.t !== "number") return null;
     const known = entry.o || (entry.a && entry.a.length) || (entry.s && entry.s.length);
-    const ttl = known ? CACHE_TTL_KNOWN : CACHE_TTL_UNKNOWN;
+    const ttl = entry.u && !known ? CACHE_TTL_UNPLAYABLE : known ? CACHE_TTL_KNOWN : CACHE_TTL_UNKNOWN;
     if (Date.now() - entry.t > ttl) return null;
+    const codes = (list) => (Array.isArray(list) ? list.filter((x) => typeof x === "string") : []);
     const clean = {
       o: typeof entry.o === "string" ? entry.o : null,
-      a: Array.isArray(entry.a) ? entry.a.filter((x) => typeof x === "string") : [],
-      s: Array.isArray(entry.s) ? entry.s.filter((x) => typeof x === "string") : [],
+      a: codes(entry.a),
+      s: codes(entry.s),
       d: typeof entry.d === "string" ? entry.d : null,
+      n: Array.isArray(entry.n) ? codes(entry.n) : null, // null: checked before tags were read
+      u: entry.u ? 1 : 0,
       t: entry.t,
     };
     signals.set(id, clean);
@@ -460,33 +512,71 @@
   // -------------------------------------------------------------------
 
   function enqueue(id) {
-    if (queued.has(id) || inFlight.has(id) || signals.has(id) || failed.has(id)) return;
-    queued.add(id);
-    queue.push(id);
-    pump();
+    if (signals.has(id) || failed.has(id) || waiting.has(id)) return;
+    queueCheck(id);
   }
 
+  function queueCheck(id) {
+    if (queued.has(id) || inFlight.has(id)) return;
+    queued.add(id);
+    queue.push(id);
+    schedulePump();
+  }
+
+  // Start checks once the current batch of cards is queued, so the on-screen
+  // ones among them can go first.
+  let pumpScheduled = false;
+  function schedulePump() {
+    if (pumpScheduled) return;
+    pumpScheduled = true;
+    setTimeout(() => {
+      pumpScheduled = false;
+      pump();
+    }, 0);
+  }
+
+  function refresh(id) {
+    if (refreshing.has(id)) return;
+    refreshing.add(id);
+    queueCheck(id);
+  }
+
+  // Videos on screen go first, then the rest in the order they came.
+  function nextId() {
+    const i = queue.findIndex((id) => onScreen.has(id));
+    return queue.splice(i === -1 ? 0 : i, 1)[0];
+  }
+
+  let pumpTimer = 0;
   function pump() {
     while (inFlight.size < MAX_CONCURRENT && queue.length) {
       const wait = pausedUntil - Date.now();
       if (wait > 0) {
-        setTimeout(pump, wait);
+        clearTimeout(pumpTimer);
+        pumpTimer = setTimeout(pump, wait);
         return;
       }
-      const id = queue.shift();
+      const id = nextId();
       queued.delete(id);
-      if (signals.has(id)) {
+      if (signals.has(id) && !refreshing.has(id)) {
         reevaluateId(id);
         continue;
       }
+      if (!cardWith(id)) continue; // its card is gone, e.g. after moving to another page
       inFlight.add(id);
       fetchSignals(id)
-        .then(async (sig) => {
-          if (sig === "retry") setTimeout(() => enqueue(id), 0);
-          else if (sig) await putCached(id, sig);
-          else retryLater(id);
+        .catch(() => ({ why: "unexpected error" }))
+        .then(async (res) => {
+          if (res.sig) {
+            attempts.delete(id);
+            lastError.delete(id);
+            await putCached(id, res.sig);
+          } else if (res.again) {
+            setTimeout(() => queueCheck(id), 0); // waits for the pause YouTube asked for
+          } else if (!signals.has(id)) {
+            retryLater(id, res.why);
+          }
         })
-        .catch(() => retryLater(id))
         .finally(() => {
           inFlight.delete(id);
           reevaluateId(id);
@@ -496,12 +586,21 @@
   }
 
   // A check can fail on a slow connection or a hiccup at YouTube's end, so
-  // give it one more go a little later before giving up on it.
-  function retryLater(id) {
+  // try again a few times, waiting longer each time.
+  function retryLater(id, why) {
     const n = (attempts.get(id) || 0) + 1;
     attempts.set(id, n);
-    if (n >= 2) failed.add(id);
-    else setTimeout(() => enqueue(id), RETRY_DELAY_MS);
+    lastError.set(id, why || "unknown error");
+    if (n > RETRY_DELAYS_MS.length) {
+      failed.add(id);
+      return;
+    }
+    const delay = RETRY_DELAYS_MS[n - 1] * (1 + Math.random() * 0.25);
+    waiting.add(id);
+    setTimeout(() => {
+      waiting.delete(id);
+      enqueue(id);
+    }, delay);
   }
 
   // Reads the watch page as a stream and stops as soon as the embedded player
@@ -509,7 +608,13 @@
   // the end of the page.
   async function readPlayerResponse(url) {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+    let stall = 0;
+    const alive = () => {
+      clearTimeout(stall);
+      stall = setTimeout(() => controller.abort(), STALL_TIMEOUT_MS);
+    };
+    const total = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+    alive();
     try {
       const res = await fetch(url, {
         credentials: "same-origin",
@@ -520,35 +625,43 @@
         pausedUntil = Date.now() + 5 * 60 * 1000; // YouTube asked us to slow down
         return { status: "retry" };
       }
-      if (!res.ok || !res.body) return { status: "missing" };
+      if (!res.ok || !res.body) return { status: "failed", why: `YouTube answered ${res.status}` };
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
+      const state = {};
       let html = "";
       let result = { status: "missing" };
       for (;;) {
         const { done, value } = await reader.read();
+        alive();
         if (value) html += decoder.decode(value, { stream: true });
-        if (done || html.length > MAX_HTML_BYTES) break;
-        result = LB.extractPlayerResponse(html);
-        if (result.status === "found") break;
+        if (value) result = LB.extractPlayerResponse(html, state);
+        if (result.status === "found" || done || html.length > MAX_HTML_BYTES) break;
       }
       reader.cancel().catch(() => {});
-      if (result.status !== "found") result = LB.extractPlayerResponse(html);
-      return result;
+      if (result.status === "found") return result;
+      return { status: "failed", why: result.status === "incomplete" ? "page cut off" : "no video data on the page" };
+    } catch {
+      return { status: "failed", why: controller.signal.aborted ? "timed out" : "network error" };
     } finally {
-      clearTimeout(timer);
+      clearTimeout(stall);
+      clearTimeout(total);
     }
   }
 
+  /**
+   * Check one video.
+   * @returns {Promise<{sig:object}|{again:true}|{why:string}>}
+   */
   async function fetchSignals(id) {
     // bpctr/has_verified skip the "this video may be inappropriate" interstitial.
     const path = `/watch?v=${encodeURIComponent(id)}&bpctr=9999999999&has_verified=1`;
     let result = await readPlayerResponse(location.origin + path);
-    if (result.status === "retry") return "retry";
-    if (result.status !== "found" && location.hostname !== "www.youtube.com") {
+    if (result.status === "failed" && location.hostname !== "www.youtube.com") {
       result = await readPlayerResponse("https://www.youtube.com" + path);
     }
-    if (result.status !== "found") return null;
+    if (result.status === "retry") return { again: true };
+    if (result.status !== "found") return { why: result.why };
     const pr = result.data;
     const sig = LB.signalsFromPlayerResponse(pr);
     // When YouTube has no audio or caption language, fall back to the
@@ -558,7 +671,13 @@
       const description = LB.descriptionFromPlayerResponse(pr);
       d = LB.confidentLanguage(description, await detect(description));
     }
-    return { o: sig.o, a: sig.a, s: sig.s, d, t: Date.now() };
+    // Only language codes are kept, never the tags themselves.
+    const n = LB.namedLanguages(LB.tagTextFromPlayerResponse(pr));
+    // "Sign in to confirm you're not a bot" and similar pages leave the
+    // language fields out. Look again in an hour rather than in three days.
+    const status = pr && pr.playabilityStatus && pr.playabilityStatus.status;
+    const u = status && status !== "OK" ? 1 : 0;
+    return { sig: { o: sig.o, a: sig.a, s: sig.s, d, n, u, t: Date.now() } };
   }
 
   // -------------------------------------------------------------------
@@ -584,7 +703,12 @@
 
   function scan() {
     for (const [card, { ids, key }] of findCards()) {
-      if (card.getAttribute("data-lb-key") === key && card.hasAttribute("data-lb-done")) continue;
+      // Look again when YouTube fills in a card's title after its link.
+      const same =
+        card.getAttribute("data-lb-key") === key &&
+        card.hasAttribute("data-lb-done") &&
+        seenText.get(card) === cardText(card, ids.length !== 1).text;
+      if (same) continue;
       card.setAttribute("data-lb-done", "");
       evaluate(card, ids, key);
     }
@@ -630,7 +754,12 @@
     attributes: true,
     attributeFilter: ["href"],
   });
-  window.addEventListener("yt-navigate-finish", rescanAll);
+  // A new YouTube page is a fresh start for checks that kept failing.
+  window.addEventListener("yt-navigate-finish", () => {
+    for (const id of failed) attempts.delete(id);
+    failed.clear();
+    rescanAll();
+  });
   window.addEventListener("popstate", scheduleScan);
 
   LB.storage.loadSettings().then((s) => {

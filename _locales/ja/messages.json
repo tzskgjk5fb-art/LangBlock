@@ -227,5 +227,8 @@
   },
   "whyDescription": {
     "message": "説明"
+  },
+  "whyTags": {
+    "message": "タグ"
   }
 }

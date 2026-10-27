@@ -185,16 +185,16 @@
   // YouTube player data
   // ---------------------------------------------------------------------
 
-  const PLAYER_MARKER = /ytInitialPlayerResponse\s*=\s*\{/;
+  const PLAYER_MARKER = /ytInitialPlayerResponse\s*=\s*\{/g;
 
   /**
-   * Find the end of a JSON object that starts at `start` (a "{").
+   * Find the end of a JSON object that starts at `pos.i` (a "{").
    * Returns the index after the closing brace, or -1 if the text ends first.
+   * `pos` keeps the scan's place, so the next call only reads what was added.
    */
-  function scanJsonObject(text, start) {
-    let depth = 0;
-    let inString = false;
-    for (let i = start; i < text.length; i++) {
+  function scanJsonObject(text, pos) {
+    let { i, depth, inString } = pos;
+    for (; i < text.length; i++) {
       const c = text.charCodeAt(i);
       if (inString) {
         if (c === 92 /* \ */) i++;
@@ -208,21 +208,31 @@
         if (depth === 0) return i + 1;
       }
     }
+    Object.assign(pos, { i, depth, inString });
     return -1;
   }
 
   /**
    * Pull ytInitialPlayerResponse out of (possibly partial) watch page HTML.
+   * While the page streams in, pass the same `state` object each time with
+   * the longer text, and only the new part is read.
    * @returns {{status:"found", data:object}|{status:"incomplete"}|{status:"missing"}}
    */
-  function extractPlayerResponse(html) {
-    const m = PLAYER_MARKER.exec(html);
-    if (!m) return { status: "missing" };
-    const start = m.index + m[0].length - 1;
-    const end = scanJsonObject(html, start);
+  function extractPlayerResponse(html, state = {}) {
+    if (state.start === undefined) {
+      PLAYER_MARKER.lastIndex = state.from || 0;
+      const m = PLAYER_MARKER.exec(html);
+      if (!m) {
+        state.from = Math.max(0, html.length - 64); // the marker may be split across chunks
+        return { status: "missing" };
+      }
+      state.start = m.index + m[0].length - 1;
+      state.pos = { i: state.start, depth: 0, inString: false };
+    }
+    const end = scanJsonObject(html, state.pos);
     if (end === -1) return { status: "incomplete" };
     try {
-      return { status: "found", data: JSON.parse(html.slice(start, end)) };
+      return { status: "found", data: JSON.parse(html.slice(state.start, end)) };
     } catch {
       return { status: "missing" };
     }
@@ -282,10 +292,46 @@
     return typeof d === "string" ? d.slice(0, 1500) : "";
   }
 
+  // The uploader's tags and the description's hashtags. Videos that YouTube
+  // labels English but that are spoken in Hinglish are often tagged
+  // "premiere pro tutorial in hindi" or "#hindi".
+  function tagTextFromPlayerResponse(pr) {
+    const vd = (pr && pr.videoDetails) || {};
+    const tags = Array.isArray(vd.keywords) ? vd.keywords.filter((k) => typeof k === "string") : [];
+    const description = typeof vd.shortDescription === "string" ? vd.shortDescription : "";
+    const hashtags = description.match(/#[\p{L}\p{M}\p{N}_]+/gu) || [];
+    return [...tags.slice(0, 100), ...hashtags.slice(0, 50)].join(", ").slice(0, 5000);
+  }
+
+  /**
+   * Every language a text names, by the same rules as for titles. Used for
+   * tags, so only language codes need to be remembered.
+   */
+  function namedLanguages(text) {
+    if (!text) return [];
+    return LANGUAGES.filter((l) => nameVerdict(text, [l.code])).map((l) => l.code);
+  }
+
+  // Tags naming more languages than this are search bait ("in hindi, in
+  // tamil, in telugu…"), not the video's language.
+  const MAX_TAGGED_LANGUAGES = 2;
+
+  /**
+   * A blocked language the tags name, when nothing better says otherwise.
+   * The original audio track among several is trusted over tags.
+   */
+  function tagVerdict(sig, blocked) {
+    const named = (sig && Array.isArray(sig.n) && sig.n) || [];
+    if (!sig || sig.o || named.length === 0 || named.length > MAX_TAGGED_LANGUAGES) return null;
+    const hit = named.find((c) => blocked.has(c));
+    return hit ? { lang: hit, source: "tags" } : null;
+  }
+
   /**
    * Decide from cached signals whether a video is in a blocked language.
-   * @param {{o?:string|null, a?:string[], s?:string[], d?:string|null}} sig
+   * @param {{o?:string|null, a?:string[], s?:string[], d?:string|null, n?:string[]}} sig
    *   d = language the browser detected in the description, if any
+   *   n = languages the tags and hashtags name
    * @returns {{lang:string, source:string}|"clear"|null}
    *   "clear" = we know the spoken language and it isn't blocked
    *   null    = no usable signal
@@ -300,14 +346,16 @@
         const dub = audio.find((l) => blocked.has(l));
         if (dub) return { lang: dub, source: "dub" };
       }
-      return "clear";
+      // English is YouTube's default label, and it is often wrong for
+      // Hinglish and similar mixes. Tags naming a blocked language win over it.
+      return (spoken === "en" && tagVerdict(sig, blocked)) || "clear";
     }
     if (opts.blockDubbed) {
       const dub = audio.find((l) => blocked.has(l));
       if (dub) return { lang: dub, source: "dub" };
     }
     if (sig.d && blocked.has(sig.d)) return { lang: sig.d, source: "description" };
-    return null;
+    return tagVerdict(sig, blocked);
   }
 
   /**
@@ -577,6 +625,10 @@
     extractPlayerResponse,
     signalsFromPlayerResponse,
     descriptionFromPlayerResponse,
+    tagTextFromPlayerResponse,
+    namedLanguages,
+    tagVerdict,
+    MAX_TAGGED_LANGUAGES,
     spokenVerdict,
     spokenLanguage,
     scriptShare,

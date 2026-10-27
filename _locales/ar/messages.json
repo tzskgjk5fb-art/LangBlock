@@ -227,5 +227,8 @@
   },
   "whyDescription": {
     "message": "الوصف"
+  },
+  "whyTags": {
+    "message": "الوسوم"
   }
 }

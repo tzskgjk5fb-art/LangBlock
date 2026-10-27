@@ -227,5 +227,8 @@
   },
   "whyDescription": {
     "message": "descrizione"
+  },
+  "whyTags": {
+    "message": "tag"
   }
 }

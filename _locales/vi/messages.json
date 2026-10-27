@@ -227,5 +227,8 @@
   },
   "whyDescription": {
     "message": "mô tả"
+  },
+  "whyTags": {
+    "message": "thẻ"
   }
 }

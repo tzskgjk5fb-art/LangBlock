@@ -227,5 +227,8 @@
   },
   "whyDescription": {
     "message": "설명"
+  },
+  "whyTags": {
+    "message": "태그"
   }
 }
