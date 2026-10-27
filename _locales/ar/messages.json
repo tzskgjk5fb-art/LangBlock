@@ -1,0 +1,225 @@
+{
+  "extDescription": {
+    "message": "يُخفي فيديوهات YouTube المنطوقة باللغات التي تختارها في البحث والاقتراحات. مجاني وخاص ولا يجمع أي بيانات."
+  },
+  "actionTitle": {
+    "message": "إعدادات LangBlock"
+  },
+  "optionsTitle": {
+    "message": "إعدادات LangBlock"
+  },
+  "toggleTitle": {
+    "message": "تشغيل LangBlock أو إيقافه"
+  },
+  "filteringOn": {
+    "message": "التصفية مفعّلة"
+  },
+  "lede": {
+    "message": "يُخفي فيديوهات YouTube المنطوقة باللغات التي تختارها. كل شيء يعمل على جهازك."
+  },
+  "blockedHeading": {
+    "message": "اللغات المحظورة"
+  },
+  "noLanguages": {
+    "message": "لم تُحظر أي لغة بعد. اختر لغة من القائمة أدناه للبدء."
+  },
+  "blockAllExcept": {
+    "message": "حظر الكل باستثناء $LANG$",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "unblockAll": {
+    "message": "إلغاء حظر الكل"
+  },
+  "undo": {
+    "message": "تراجع"
+  },
+  "blockedAllMsg": {
+    "message": "يتم حظر كل اللغات باستثناء $LANG$.",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "unblockedAllMsg": {
+    "message": "تم إلغاء حظر كل اللغات."
+  },
+  "blockingSummary": {
+    "message": "اللغات المحظورة: $COUNT$ من $TOTAL$.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "blockingSummaryExcept": {
+    "message": "اللغات المحظورة: $COUNT$ من $TOTAL$. غير محظورة: $LIST$.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "list": {
+        "content": "$3"
+      }
+    }
+  },
+  "stopBlocking": {
+    "message": "إلغاء حظر $LANG$",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "searchPlaceholder": {
+    "message": "ابحث عن لغة…"
+  },
+  "searchLabel": {
+    "message": "ابحث عن لغة"
+  },
+  "addLanguagePlaceholder": {
+    "message": "أضف لغة…"
+  },
+  "noMatch": {
+    "message": "لا توجد لغة مطابقة."
+  },
+  "whereHeading": {
+    "message": "أين تتم التصفية"
+  },
+  "surfaceSearch": {
+    "message": "نتائج البحث"
+  },
+  "surfaceHome": {
+    "message": "الصفحة الرئيسية والاشتراكات والخلاصات الأخرى"
+  },
+  "surfaceWatch": {
+    "message": "الاقتراحات بجانب الفيديو"
+  },
+  "surfaceChannel": {
+    "message": "صفحات القنوات"
+  },
+  "detectionHeading": {
+    "message": "الاكتشاف"
+  },
+  "deepCheckTitle": {
+    "message": "التحقق من اللغة المنطوقة"
+  },
+  "recommended": {
+    "message": "(موصى به)"
+  },
+  "deepCheckHelp": {
+    "message": "يقرأ اللغة المنطوقة التي سجّلها YouTube نفسه لكل فيديو (لغة الترجمة التلقائية ومسار الصوت الأصلي). بهذا يكتشف الفيديوهات ذات العناوين المترجمة أو الإنجليزية. تُحمَّل صفحة كل فيديو جديد من YouTube مرة واحدة فقط، وتُحفظ النتيجة على هذا الجهاز. أوقف هذا الخيار للحكم من العناوين فقط."
+  },
+  "blockDubbedTitle": {
+    "message": "إخفاء الفيديوهات التي تتضمن دبلجة بلغة محظورة أيضًا"
+  },
+  "blockDubbedHelp": {
+    "message": "مثلًا، فيديو باللغة الإنجليزية يوفّر أيضًا صوتًا مدبلجًا بالهندية."
+  },
+  "hideUntilCheckedTitle": {
+    "message": "إخفاء الفيديوهات حتى يتم التحقق منها"
+  },
+  "hideUntilCheckedHelp": {
+    "message": "يمنع ظهور الفيديو للحظة قبل إخفائه. قد تستغرق الفيديوهات لحظة حتى تظهر."
+  },
+  "hiddenHeading": {
+    "message": "الفيديوهات المخفية"
+  },
+  "actionHide": {
+    "message": "إزالتها بالكامل"
+  },
+  "actionDim": {
+    "message": "تعتيمها مع ملصق يوضح السبب"
+  },
+  "troubleshootingHeading": {
+    "message": "استكشاف الأخطاء وإصلاحها"
+  },
+  "debugTitle": {
+    "message": "عرض أسباب قرار LangBlock على كل فيديو"
+  },
+  "debugHelp": {
+    "message": "يضيف ملصقًا صغيرًا إلى كل فيديو يوضح ما وجده LangBlock، ويعتّم الفيديوهات المخفية بدلًا من إزالتها. الفيديو الذي لا يحمل ملصقًا لم يتعرّف عليه LangBlock. الملصقات باللغة الإنجليزية. أوقف هذا الخيار عند الانتهاء."
+  },
+  "storedHeading": {
+    "message": "مخزّن على هذا الجهاز"
+  },
+  "cacheCountLabel": {
+    "message": "فيديوهات محفوظة حتى لا يُعاد التحقق منها:"
+  },
+  "clearCache": {
+    "message": "نسيان الفيديوهات المحفوظة"
+  },
+  "cacheCleared": {
+    "message": "تم."
+  },
+  "footerFree": {
+    "message": "LangBlock مجاني. لا يجمع أي بيانات ولا يرسل أي شيء إلى أي مكان سوى الطلبات العادية إلى YouTube."
+  },
+  "donate": {
+    "message": "♥ ادعم LangBlock"
+  },
+  "donateShort": {
+    "message": "♥ ادعم"
+  },
+  "allSettings": {
+    "message": "كل الإعدادات"
+  },
+  "statusOff": {
+    "message": "LangBlock متوقف."
+  },
+  "statusPick": {
+    "message": "اختر لغة أدناه للبدء."
+  },
+  "statusInactive": {
+    "message": "لا تصفية في هذه الصفحة (راجع كل الإعدادات)."
+  },
+  "statusHidden": {
+    "message": "المخفية في هذه الصفحة: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusPending": {
+    "message": "قيد التحقق: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusOpenYoutube": {
+    "message": "افتح YouTube وسيصفّيه LangBlock تلقائيًا."
+  },
+  "hiddenBy": {
+    "message": "أخفاه LangBlock: $WHY$",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "whyTitle": {
+    "message": "العنوان"
+  },
+  "whySpoken": {
+    "message": "الكلام"
+  },
+  "whyDub": {
+    "message": "الدبلجة"
+  },
+  "whyDescription": {
+    "message": "الوصف"
+  }
+}

@@ -28,6 +28,9 @@ The second check matters because YouTube auto-translates titles and auto-dubs au
 ### Picking languages
 Tick languages in the list, or use "Block all except English" (named after the browser's language) to block every language LangBlock knows except yours, and "Unblock all" to clear the list. Individual languages can still be ticked or unticked afterwards, and both buttons offer Undo.
 
+### Translations
+The settings page, popup and the "Hidden by LangBlock" label follow the browser's language, using the standard extension `_locales` system (no extra permission). Included: English, Arabic, Chinese (Simplified and Traditional), French, German, Hindi, Indonesian, Italian, Japanese, Korean, Polish, Portuguese (Brazil and Portugal), Russian, Spanish, Turkish, Ukrainian and Vietnamese; any other browser language falls back to English. Language names come from the browser (`Intl.DisplayNames`), so they appear in the user's language and can be searched in either that language or English. The troubleshooting labels stay in English. The translations haven't been checked by native speakers yet, so corrections are welcome.
+
 ### Troubleshooting mode
 Settings → Troubleshooting → "Show LangBlock's reasoning on every video" labels each recognised video with what LangBlock found (spoken language and where it came from, the title's detected language, shown as "maybe Italian (ignored)" when the guess was too weak to use, and any language named in the text) and fades hidden videos instead of removing them. A video with no label wasn't recognised as a video card.
 

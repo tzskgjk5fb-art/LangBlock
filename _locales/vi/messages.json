@@ -1,0 +1,225 @@
+{
+  "extDescription": {
+    "message": "Ẩn video YouTube nói bằng các ngôn ngữ bạn chọn, trong tìm kiếm và đề xuất. Miễn phí, riêng tư, không thu thập dữ liệu."
+  },
+  "actionTitle": {
+    "message": "Cài đặt LangBlock"
+  },
+  "optionsTitle": {
+    "message": "Cài đặt LangBlock"
+  },
+  "toggleTitle": {
+    "message": "Bật hoặc tắt LangBlock"
+  },
+  "filteringOn": {
+    "message": "Đang lọc"
+  },
+  "lede": {
+    "message": "Ẩn các video YouTube nói bằng những ngôn ngữ bạn chọn. Mọi thứ chạy trên thiết bị của bạn."
+  },
+  "blockedHeading": {
+    "message": "Ngôn ngữ bị chặn"
+  },
+  "noLanguages": {
+    "message": "Chưa chặn ngôn ngữ nào. Hãy chọn một ngôn ngữ bên dưới để bắt đầu."
+  },
+  "blockAllExcept": {
+    "message": "Chặn tất cả trừ $LANG$",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "unblockAll": {
+    "message": "Bỏ chặn tất cả"
+  },
+  "undo": {
+    "message": "Hoàn tác"
+  },
+  "blockedAllMsg": {
+    "message": "Đang chặn mọi ngôn ngữ trừ $LANG$.",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "unblockedAllMsg": {
+    "message": "Đã bỏ chặn mọi ngôn ngữ."
+  },
+  "blockingSummary": {
+    "message": "Ngôn ngữ bị chặn: $COUNT$/$TOTAL$.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "blockingSummaryExcept": {
+    "message": "Ngôn ngữ bị chặn: $COUNT$/$TOTAL$. Không bị chặn: $LIST$.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "list": {
+        "content": "$3"
+      }
+    }
+  },
+  "stopBlocking": {
+    "message": "Bỏ chặn $LANG$",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "searchPlaceholder": {
+    "message": "Tìm ngôn ngữ…"
+  },
+  "searchLabel": {
+    "message": "Tìm ngôn ngữ"
+  },
+  "addLanguagePlaceholder": {
+    "message": "Thêm ngôn ngữ…"
+  },
+  "noMatch": {
+    "message": "Không có ngôn ngữ phù hợp."
+  },
+  "whereHeading": {
+    "message": "Lọc ở đâu"
+  },
+  "surfaceSearch": {
+    "message": "Kết quả tìm kiếm"
+  },
+  "surfaceHome": {
+    "message": "Trang chủ, kênh đăng ký và các bảng tin khác"
+  },
+  "surfaceWatch": {
+    "message": "Đề xuất bên cạnh video"
+  },
+  "surfaceChannel": {
+    "message": "Trang kênh"
+  },
+  "detectionHeading": {
+    "message": "Nhận diện"
+  },
+  "deepCheckTitle": {
+    "message": "Kiểm tra ngôn ngữ nói"
+  },
+  "recommended": {
+    "message": "(nên bật)"
+  },
+  "deepCheckHelp": {
+    "message": "Đọc ngôn ngữ nói mà chính YouTube đã ghi nhận cho từng video (ngôn ngữ của phụ đề tự động và bản âm thanh gốc). Nhờ vậy phát hiện được cả video có tiêu đề đã dịch hoặc bằng tiếng Anh. Trang của mỗi video mới chỉ được tải từ YouTube một lần, và kết quả được ghi nhớ trên thiết bị này. Tắt tùy chọn này để chỉ đánh giá theo tiêu đề."
+  },
+  "blockDubbedTitle": {
+    "message": "Ẩn cả video có bản lồng tiếng bằng ngôn ngữ bị chặn"
+  },
+  "blockDubbedHelp": {
+    "message": "Ví dụ: một video tiếng Anh có thêm bản lồng tiếng Hindi."
+  },
+  "hideUntilCheckedTitle": {
+    "message": "Ẩn video cho đến khi kiểm tra xong"
+  },
+  "hideUntilCheckedHelp": {
+    "message": "Tránh thoáng thấy video trước khi nó bị ẩn. Video có thể mất một chút thời gian mới hiện ra."
+  },
+  "hiddenHeading": {
+    "message": "Video bị ẩn"
+  },
+  "actionHide": {
+    "message": "Xóa hẳn khỏi trang"
+  },
+  "actionDim": {
+    "message": "Làm mờ kèm nhãn ghi lý do"
+  },
+  "troubleshootingHeading": {
+    "message": "Khắc phục sự cố"
+  },
+  "debugTitle": {
+    "message": "Hiện lý do của LangBlock trên mọi video"
+  },
+  "debugHelp": {
+    "message": "Thêm một nhãn nhỏ vào mỗi video cho biết LangBlock tìm thấy gì, và làm mờ video bị ẩn thay vì xóa chúng. Video không có nhãn là video LangBlock không nhận ra. Nhãn được viết bằng tiếng Anh. Hãy tắt khi xong việc."
+  },
+  "storedHeading": {
+    "message": "Lưu trên thiết bị này"
+  },
+  "cacheCountLabel": {
+    "message": "Số video đã ghi nhớ để không phải kiểm tra lại:"
+  },
+  "clearCache": {
+    "message": "Quên các video đã ghi nhớ"
+  },
+  "cacheCleared": {
+    "message": "Xong."
+  },
+  "footerFree": {
+    "message": "LangBlock miễn phí. Tiện ích không thu thập dữ liệu và không gửi gì đi đâu ngoài các yêu cầu thông thường tới YouTube."
+  },
+  "donate": {
+    "message": "♥ Ủng hộ LangBlock"
+  },
+  "donateShort": {
+    "message": "♥ Ủng hộ"
+  },
+  "allSettings": {
+    "message": "Tất cả cài đặt"
+  },
+  "statusOff": {
+    "message": "LangBlock đang tắt."
+  },
+  "statusPick": {
+    "message": "Chọn một ngôn ngữ bên dưới để bắt đầu."
+  },
+  "statusInactive": {
+    "message": "Không lọc trên trang này (xem Tất cả cài đặt)."
+  },
+  "statusHidden": {
+    "message": "Đã ẩn trên trang này: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusPending": {
+    "message": "Đang kiểm tra: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusOpenYoutube": {
+    "message": "Mở YouTube và LangBlock sẽ tự động lọc."
+  },
+  "hiddenBy": {
+    "message": "LangBlock đã ẩn: $WHY$",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "whyTitle": {
+    "message": "tiêu đề"
+  },
+  "whySpoken": {
+    "message": "lời nói"
+  },
+  "whyDub": {
+    "message": "lồng tiếng"
+  },
+  "whyDescription": {
+    "message": "mô tả"
+  }
+}

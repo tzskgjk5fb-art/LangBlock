@@ -1,0 +1,225 @@
+{
+  "extDescription": {
+    "message": "Sembunyikan video YouTube berbahasa pilihan Anda di pencarian dan rekomendasi. Gratis, privat, tanpa mengumpulkan data."
+  },
+  "actionTitle": {
+    "message": "Setelan LangBlock"
+  },
+  "optionsTitle": {
+    "message": "Setelan LangBlock"
+  },
+  "toggleTitle": {
+    "message": "Aktifkan atau nonaktifkan LangBlock"
+  },
+  "filteringOn": {
+    "message": "Filter aktif"
+  },
+  "lede": {
+    "message": "Sembunyikan video YouTube yang diucapkan dalam bahasa pilihan Anda. Semuanya berjalan di perangkat Anda."
+  },
+  "blockedHeading": {
+    "message": "Bahasa yang diblokir"
+  },
+  "noLanguages": {
+    "message": "Belum ada bahasa yang diblokir. Pilih salah satu di bawah untuk memulai."
+  },
+  "blockAllExcept": {
+    "message": "Blokir semua kecuali $LANG$",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "unblockAll": {
+    "message": "Buka blokir semua"
+  },
+  "undo": {
+    "message": "Urungkan"
+  },
+  "blockedAllMsg": {
+    "message": "Semua bahasa diblokir kecuali $LANG$.",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "unblockedAllMsg": {
+    "message": "Blokir semua bahasa sudah dibuka."
+  },
+  "blockingSummary": {
+    "message": "Bahasa yang diblokir: $COUNT$ dari $TOTAL$.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "blockingSummaryExcept": {
+    "message": "Bahasa yang diblokir: $COUNT$ dari $TOTAL$. Tidak diblokir: $LIST$.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "list": {
+        "content": "$3"
+      }
+    }
+  },
+  "stopBlocking": {
+    "message": "Berhenti memblokir $LANG$",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "searchPlaceholder": {
+    "message": "Cari bahasa…"
+  },
+  "searchLabel": {
+    "message": "Cari bahasa"
+  },
+  "addLanguagePlaceholder": {
+    "message": "Tambahkan bahasa…"
+  },
+  "noMatch": {
+    "message": "Tidak ada bahasa yang cocok."
+  },
+  "whereHeading": {
+    "message": "Tempat memfilter"
+  },
+  "surfaceSearch": {
+    "message": "Hasil penelusuran"
+  },
+  "surfaceHome": {
+    "message": "Beranda, Subscription, dan feed lainnya"
+  },
+  "surfaceWatch": {
+    "message": "Saran di samping video"
+  },
+  "surfaceChannel": {
+    "message": "Halaman channel"
+  },
+  "detectionHeading": {
+    "message": "Deteksi"
+  },
+  "deepCheckTitle": {
+    "message": "Periksa bahasa yang diucapkan"
+  },
+  "recommended": {
+    "message": "(disarankan)"
+  },
+  "deepCheckHelp": {
+    "message": "Membaca bahasa lisan yang dicatat YouTube sendiri untuk setiap video (bahasa subtitel otomatis dan trek audio asli). Dengan begitu, video yang judulnya diterjemahkan atau berbahasa Inggris juga terdeteksi. Halaman setiap video baru dimuat dari YouTube sekali saja, dan hasilnya diingat di perangkat ini. Nonaktifkan untuk menilai dari judul saja."
+  },
+  "blockDubbedTitle": {
+    "message": "Sembunyikan juga video dengan trek sulih suara dalam bahasa yang diblokir"
+  },
+  "blockDubbedHelp": {
+    "message": "Misalnya, video berbahasa Inggris yang juga menyediakan audio sulih suara bahasa Hindi."
+  },
+  "hideUntilCheckedTitle": {
+    "message": "Sembunyikan video sampai selesai diperiksa"
+  },
+  "hideUntilCheckedHelp": {
+    "message": "Mencegah video terlihat sekilas sebelum disembunyikan. Video mungkin perlu waktu sejenak untuk muncul."
+  },
+  "hiddenHeading": {
+    "message": "Video yang disembunyikan"
+  },
+  "actionHide": {
+    "message": "Hapus sepenuhnya"
+  },
+  "actionDim": {
+    "message": "Buat pudar dengan label alasannya"
+  },
+  "troubleshootingHeading": {
+    "message": "Pemecahan masalah"
+  },
+  "debugTitle": {
+    "message": "Tampilkan alasan LangBlock di setiap video"
+  },
+  "debugHelp": {
+    "message": "Menambahkan label kecil di setiap video tentang apa yang ditemukan LangBlock, dan memudarkan video yang disembunyikan alih-alih menghapusnya. Video tanpa label tidak dikenali oleh LangBlock. Labelnya dalam bahasa Inggris. Nonaktifkan setelah selesai."
+  },
+  "storedHeading": {
+    "message": "Tersimpan di perangkat ini"
+  },
+  "cacheCountLabel": {
+    "message": "Video yang diingat agar tidak diperiksa lagi:"
+  },
+  "clearCache": {
+    "message": "Lupakan video yang diingat"
+  },
+  "cacheCleared": {
+    "message": "Selesai."
+  },
+  "footerFree": {
+    "message": "LangBlock gratis. LangBlock tidak mengumpulkan data dan tidak mengirim apa pun ke mana pun selain permintaan biasa ke YouTube."
+  },
+  "donate": {
+    "message": "♥ Dukung LangBlock"
+  },
+  "donateShort": {
+    "message": "♥ Dukung"
+  },
+  "allSettings": {
+    "message": "Semua setelan"
+  },
+  "statusOff": {
+    "message": "LangBlock nonaktif."
+  },
+  "statusPick": {
+    "message": "Pilih bahasa di bawah untuk memulai."
+  },
+  "statusInactive": {
+    "message": "Tidak memfilter di halaman ini (lihat Semua setelan)."
+  },
+  "statusHidden": {
+    "message": "Disembunyikan di halaman ini: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusPending": {
+    "message": "Masih diperiksa: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusOpenYoutube": {
+    "message": "Buka YouTube dan LangBlock akan memfilternya otomatis."
+  },
+  "hiddenBy": {
+    "message": "Disembunyikan oleh LangBlock: $WHY$",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "whyTitle": {
+    "message": "judul"
+  },
+  "whySpoken": {
+    "message": "lisan"
+  },
+  "whyDub": {
+    "message": "sulih suara"
+  },
+  "whyDescription": {
+    "message": "deskripsi"
+  }
+}

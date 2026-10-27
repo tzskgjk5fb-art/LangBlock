@@ -1,0 +1,225 @@
+{
+  "extDescription": {
+    "message": "Скрывает видео YouTube на выбранных вами языках в поиске и рекомендациях. Бесплатно, конфиденциально, без сбора данных."
+  },
+  "actionTitle": {
+    "message": "Настройки LangBlock"
+  },
+  "optionsTitle": {
+    "message": "Настройки LangBlock"
+  },
+  "toggleTitle": {
+    "message": "Включить или выключить LangBlock"
+  },
+  "filteringOn": {
+    "message": "Фильтр включён"
+  },
+  "lede": {
+    "message": "Скрывает видео YouTube, в которых говорят на выбранных вами языках. Всё работает на вашем устройстве."
+  },
+  "blockedHeading": {
+    "message": "Заблокированные языки"
+  },
+  "noLanguages": {
+    "message": "Пока ни один язык не заблокирован. Выберите язык ниже, чтобы начать."
+  },
+  "blockAllExcept": {
+    "message": "Блокировать все, кроме: $LANG$",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "unblockAll": {
+    "message": "Разблокировать все"
+  },
+  "undo": {
+    "message": "Отменить"
+  },
+  "blockedAllMsg": {
+    "message": "Заблокированы все языки, кроме: $LANG$.",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "unblockedAllMsg": {
+    "message": "Все языки разблокированы."
+  },
+  "blockingSummary": {
+    "message": "Заблокировано языков: $COUNT$ из $TOTAL$.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "blockingSummaryExcept": {
+    "message": "Заблокировано языков: $COUNT$ из $TOTAL$. Не заблокированы: $LIST$.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "list": {
+        "content": "$3"
+      }
+    }
+  },
+  "stopBlocking": {
+    "message": "Больше не блокировать: $LANG$",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "searchPlaceholder": {
+    "message": "Поиск языков…"
+  },
+  "searchLabel": {
+    "message": "Поиск языков"
+  },
+  "addLanguagePlaceholder": {
+    "message": "Добавить язык…"
+  },
+  "noMatch": {
+    "message": "Подходящих языков нет."
+  },
+  "whereHeading": {
+    "message": "Где фильтровать"
+  },
+  "surfaceSearch": {
+    "message": "Результаты поиска"
+  },
+  "surfaceHome": {
+    "message": "Главная страница, подписки и другие ленты"
+  },
+  "surfaceWatch": {
+    "message": "Рекомендации рядом с видео"
+  },
+  "surfaceChannel": {
+    "message": "Страницы каналов"
+  },
+  "detectionHeading": {
+    "message": "Определение языка"
+  },
+  "deepCheckTitle": {
+    "message": "Проверять язык речи"
+  },
+  "recommended": {
+    "message": "(рекомендуется)"
+  },
+  "deepCheckHelp": {
+    "message": "Считывает язык речи, который YouTube сам указал для каждого видео (язык автоматических субтитров и исходной звуковой дорожки). Так находятся видео с переведёнными или английскими названиями. Страница каждого нового видео загружается с YouTube один раз, а результат запоминается на этом устройстве. Отключите, чтобы судить только по названиям."
+  },
+  "blockDubbedTitle": {
+    "message": "Скрывать и видео с дубляжом на заблокированном языке"
+  },
+  "blockDubbedHelp": {
+    "message": "Например, английское видео, у которого есть ещё и дубляж на хинди."
+  },
+  "hideUntilCheckedTitle": {
+    "message": "Скрывать видео до окончания проверки"
+  },
+  "hideUntilCheckedHelp": {
+    "message": "Видео не будет мелькать перед тем, как скрыться. Видео могут появляться с небольшой задержкой."
+  },
+  "hiddenHeading": {
+    "message": "Скрытые видео"
+  },
+  "actionHide": {
+    "message": "Убирать полностью"
+  },
+  "actionDim": {
+    "message": "Затемнять с пометкой о причине"
+  },
+  "troubleshootingHeading": {
+    "message": "Устранение неполадок"
+  },
+  "debugTitle": {
+    "message": "Показывать рассуждения LangBlock на каждом видео"
+  },
+  "debugHelp": {
+    "message": "Добавляет к каждому видео небольшую метку о том, что нашёл LangBlock, и затемняет скрытые видео вместо того, чтобы убирать их. Если у видео нет метки, LangBlock его не распознал. Метки на английском. Отключите, когда закончите."
+  },
+  "storedHeading": {
+    "message": "Хранится на этом устройстве"
+  },
+  "cacheCountLabel": {
+    "message": "Запомнено видео, которые не будут проверяться снова:"
+  },
+  "clearCache": {
+    "message": "Забыть запомненные видео"
+  },
+  "cacheCleared": {
+    "message": "Готово."
+  },
+  "footerFree": {
+    "message": "LangBlock бесплатен. Он не собирает данные и ничего никуда не отправляет, кроме обычных запросов к YouTube."
+  },
+  "donate": {
+    "message": "♥ Поддержать LangBlock"
+  },
+  "donateShort": {
+    "message": "♥ Поддержать"
+  },
+  "allSettings": {
+    "message": "Все настройки"
+  },
+  "statusOff": {
+    "message": "LangBlock выключен."
+  },
+  "statusPick": {
+    "message": "Выберите язык ниже, чтобы начать."
+  },
+  "statusInactive": {
+    "message": "На этой странице фильтр не работает (см. «Все настройки»)."
+  },
+  "statusHidden": {
+    "message": "Скрыто на этой странице: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusPending": {
+    "message": "Ещё проверяется: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusOpenYoutube": {
+    "message": "Откройте YouTube, и LangBlock отфильтрует его автоматически."
+  },
+  "hiddenBy": {
+    "message": "Скрыто LangBlock: $WHY$",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "whyTitle": {
+    "message": "название"
+  },
+  "whySpoken": {
+    "message": "речь"
+  },
+  "whyDub": {
+    "message": "дубляж"
+  },
+  "whyDescription": {
+    "message": "описание"
+  }
+}

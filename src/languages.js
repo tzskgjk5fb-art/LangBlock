@@ -113,10 +113,59 @@
     return lang ? lang.name : code;
   }
 
+  // ---------------------------------------------------------------------
+  // Text shown to the user, in the browser's language
+  // ---------------------------------------------------------------------
+
+  const api = root.browser || root.chrome;
+  let uiLocale = "en";
+  try {
+    uiLocale = api.i18n.getUILanguage() || "en";
+  } catch {
+    uiLocale = "en";
+  }
+
+  /** Translated UI text from _locales (English when there's no translation). */
+  function t(key, subs) {
+    try {
+      return api.i18n.getMessage(key, subs) || key;
+    } catch {
+      return key;
+    }
+  }
+
+  // English keeps the names above ("Filipino / Tagalog"). Other languages
+  // use the browser's own translation of each language name.
+  let displayNames = null;
+  if (normalizeCode(uiLocale) !== "en") {
+    try {
+      displayNames = new Intl.DisplayNames([uiLocale], { type: "language" });
+    } catch {
+      displayNames = null;
+    }
+  }
+
+  /** A language's name in the user's language. */
+  function localName(code) {
+    const c = normalizeCode(code);
+    if (displayNames && BY_CODE[c]) {
+      try {
+        const name = displayNames.of(c);
+        if (name && name !== c) return name;
+      } catch {
+        // fall through to the English name
+      }
+    }
+    return languageName(code);
+  }
+
   root.LangBlock = Object.assign(root.LangBlock || {}, {
     LANGUAGES,
     LANGUAGE_BY_CODE: BY_CODE,
+    UI_LOCALE: uiLocale,
     normalizeCode,
     languageName,
+    localName,
+    t,
   });
 })(globalThis);

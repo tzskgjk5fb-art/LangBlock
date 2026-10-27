@@ -1,0 +1,225 @@
+{
+  "extDescription": {
+    "message": "आपकी चुनी हुई भाषाओं में बोले गए YouTube वीडियो खोज और सुझावों से छिपाता है। मुफ़्त, निजी, कोई डेटा इकट्ठा नहीं करता।"
+  },
+  "actionTitle": {
+    "message": "LangBlock सेटिंग"
+  },
+  "optionsTitle": {
+    "message": "LangBlock सेटिंग"
+  },
+  "toggleTitle": {
+    "message": "LangBlock चालू या बंद करें"
+  },
+  "filteringOn": {
+    "message": "फ़िल्टर चालू"
+  },
+  "lede": {
+    "message": "आपकी चुनी हुई भाषाओं में बोले गए YouTube वीडियो छिपाता है। सब कुछ आपके डिवाइस पर ही चलता है।"
+  },
+  "blockedHeading": {
+    "message": "ब्लॉक की गई भाषाएँ"
+  },
+  "noLanguages": {
+    "message": "अभी कोई भाषा ब्लॉक नहीं है। शुरू करने के लिए नीचे से कोई भाषा चुनें।"
+  },
+  "blockAllExcept": {
+    "message": "$LANG$ को छोड़कर सभी ब्लॉक करें",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "unblockAll": {
+    "message": "सभी अनब्लॉक करें"
+  },
+  "undo": {
+    "message": "वापस लें"
+  },
+  "blockedAllMsg": {
+    "message": "$LANG$ को छोड़कर सभी भाषाएँ ब्लॉक हैं।",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "unblockedAllMsg": {
+    "message": "सभी भाषाएँ अनब्लॉक कर दी गईं।"
+  },
+  "blockingSummary": {
+    "message": "ब्लॉक की गई भाषाएँ: $TOTAL$ में से $COUNT$।",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "blockingSummaryExcept": {
+    "message": "ब्लॉक की गई भाषाएँ: $TOTAL$ में से $COUNT$। ब्लॉक नहीं: $LIST$।",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "list": {
+        "content": "$3"
+      }
+    }
+  },
+  "stopBlocking": {
+    "message": "$LANG$ को ब्लॉक करना बंद करें",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "searchPlaceholder": {
+    "message": "भाषाएँ खोजें…"
+  },
+  "searchLabel": {
+    "message": "भाषाएँ खोजें"
+  },
+  "addLanguagePlaceholder": {
+    "message": "कोई भाषा जोड़ें…"
+  },
+  "noMatch": {
+    "message": "कोई मिलती-जुलती भाषा नहीं।"
+  },
+  "whereHeading": {
+    "message": "कहाँ फ़िल्टर करें"
+  },
+  "surfaceSearch": {
+    "message": "खोज के नतीजे"
+  },
+  "surfaceHome": {
+    "message": "होम पेज, सदस्यताएँ और दूसरी फ़ीड"
+  },
+  "surfaceWatch": {
+    "message": "किसी वीडियो के बगल में दिखने वाले सुझाव"
+  },
+  "surfaceChannel": {
+    "message": "चैनल पेज"
+  },
+  "detectionHeading": {
+    "message": "पहचान"
+  },
+  "deepCheckTitle": {
+    "message": "बोली गई भाषा जाँचें"
+  },
+  "recommended": {
+    "message": "(सुझाया गया)"
+  },
+  "deepCheckHelp": {
+    "message": "हर वीडियो के लिए YouTube ने ख़ुद जो बोली गई भाषा दर्ज की है, उसे पढ़ता है (अपने-आप बने सबटाइटल की भाषा और मूल ऑडियो ट्रैक)। इससे अनुवादित या अंग्रेज़ी शीर्षक वाले वीडियो भी पकड़ में आते हैं। हर नए वीडियो का पेज YouTube से सिर्फ़ एक बार लोड होता है, और नतीजा इसी डिवाइस पर याद रखा जाता है। सिर्फ़ शीर्षकों के आधार पर फ़ैसला करने के लिए इसे बंद करें।"
+  },
+  "blockDubbedTitle": {
+    "message": "ब्लॉक की गई भाषा में डब ट्रैक वाले वीडियो भी छिपाएँ"
+  },
+  "blockDubbedHelp": {
+    "message": "जैसे, कोई अंग्रेज़ी वीडियो जिसमें हिंदी डब ऑडियो भी हो।"
+  },
+  "hideUntilCheckedTitle": {
+    "message": "जाँच पूरी होने तक वीडियो छिपाएँ"
+  },
+  "hideUntilCheckedHelp": {
+    "message": "छिपने से पहले वीडियो पल भर के लिए नहीं दिखता। वीडियो दिखने में थोड़ा समय लग सकता है।"
+  },
+  "hiddenHeading": {
+    "message": "छिपाए गए वीडियो"
+  },
+  "actionHide": {
+    "message": "पूरी तरह हटा दें"
+  },
+  "actionDim": {
+    "message": "धुँधला करें और वजह बताने वाला लेबल दिखाएँ"
+  },
+  "troubleshootingHeading": {
+    "message": "समस्या हल करना"
+  },
+  "debugTitle": {
+    "message": "हर वीडियो पर LangBlock का तर्क दिखाएँ"
+  },
+  "debugHelp": {
+    "message": "हर वीडियो पर एक छोटा लेबल जोड़ता है जो बताता है कि LangBlock को क्या मिला, और छिपाए गए वीडियो हटाने के बजाय धुँधले कर देता है। जिस वीडियो पर लेबल नहीं है, उसे LangBlock ने पहचाना नहीं। लेबल अंग्रेज़ी में हैं। काम पूरा होने पर इसे बंद कर दें।"
+  },
+  "storedHeading": {
+    "message": "इस डिवाइस पर सेव है"
+  },
+  "cacheCountLabel": {
+    "message": "याद रखे गए वीडियो, ताकि उन्हें दोबारा न जाँचना पड़े:"
+  },
+  "clearCache": {
+    "message": "याद रखे गए वीडियो भुला दें"
+  },
+  "cacheCleared": {
+    "message": "हो गया।"
+  },
+  "footerFree": {
+    "message": "LangBlock मुफ़्त है। यह कोई डेटा इकट्ठा नहीं करता और YouTube को भेजे जाने वाले सामान्य अनुरोधों के अलावा कहीं कुछ नहीं भेजता।"
+  },
+  "donate": {
+    "message": "♥ LangBlock का साथ दें"
+  },
+  "donateShort": {
+    "message": "♥ साथ दें"
+  },
+  "allSettings": {
+    "message": "सभी सेटिंग"
+  },
+  "statusOff": {
+    "message": "LangBlock बंद है।"
+  },
+  "statusPick": {
+    "message": "शुरू करने के लिए नीचे से कोई भाषा चुनें।"
+  },
+  "statusInactive": {
+    "message": "इस पेज पर फ़िल्टर नहीं हो रहा (सभी सेटिंग देखें)।"
+  },
+  "statusHidden": {
+    "message": "इस पेज पर छिपाए गए: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusPending": {
+    "message": "अभी जाँच जारी: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusOpenYoutube": {
+    "message": "YouTube खोलें, LangBlock उसे अपने-आप फ़िल्टर कर देगा।"
+  },
+  "hiddenBy": {
+    "message": "LangBlock ने छिपाया: $WHY$",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "whyTitle": {
+    "message": "शीर्षक"
+  },
+  "whySpoken": {
+    "message": "बोली गई भाषा"
+  },
+  "whyDub": {
+    "message": "डब ऑडियो"
+  },
+  "whyDescription": {
+    "message": "विवरण"
+  }
+}

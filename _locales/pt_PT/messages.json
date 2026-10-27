@@ -1,0 +1,225 @@
+{
+  "extDescription": {
+    "message": "Oculta vídeos do YouTube falados nos idiomas que escolher, na pesquisa e nas recomendações. Grátis, privado, sem recolha de dados."
+  },
+  "actionTitle": {
+    "message": "Definições do LangBlock"
+  },
+  "optionsTitle": {
+    "message": "Definições do LangBlock"
+  },
+  "toggleTitle": {
+    "message": "Ativar ou desativar o LangBlock"
+  },
+  "filteringOn": {
+    "message": "Filtro ativado"
+  },
+  "lede": {
+    "message": "Oculta vídeos do YouTube falados nos idiomas que escolher. Tudo funciona no seu dispositivo."
+  },
+  "blockedHeading": {
+    "message": "Idiomas bloqueados"
+  },
+  "noLanguages": {
+    "message": "Nenhum idioma bloqueado ainda. Escolha um abaixo para começar."
+  },
+  "blockAllExcept": {
+    "message": "Bloquear todos, exceto $LANG$",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "unblockAll": {
+    "message": "Desbloquear todos"
+  },
+  "undo": {
+    "message": "Desfazer"
+  },
+  "blockedAllMsg": {
+    "message": "Todos os idiomas estão bloqueados, exceto $LANG$.",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "unblockedAllMsg": {
+    "message": "Todos os idiomas foram desbloqueados."
+  },
+  "blockingSummary": {
+    "message": "Idiomas bloqueados: $COUNT$ de $TOTAL$.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "blockingSummaryExcept": {
+    "message": "Idiomas bloqueados: $COUNT$ de $TOTAL$. Não bloqueados: $LIST$.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "list": {
+        "content": "$3"
+      }
+    }
+  },
+  "stopBlocking": {
+    "message": "Parar de bloquear $LANG$",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "searchPlaceholder": {
+    "message": "Pesquisar idiomas…"
+  },
+  "searchLabel": {
+    "message": "Pesquisar idiomas"
+  },
+  "addLanguagePlaceholder": {
+    "message": "Adicionar um idioma…"
+  },
+  "noMatch": {
+    "message": "Nenhum idioma encontrado."
+  },
+  "whereHeading": {
+    "message": "Onde filtrar"
+  },
+  "surfaceSearch": {
+    "message": "Resultados da pesquisa"
+  },
+  "surfaceHome": {
+    "message": "Página inicial, subscrições e outros feeds"
+  },
+  "surfaceWatch": {
+    "message": "Sugestões ao lado de um vídeo"
+  },
+  "surfaceChannel": {
+    "message": "Páginas de canais"
+  },
+  "detectionHeading": {
+    "message": "Deteção"
+  },
+  "deepCheckTitle": {
+    "message": "Verificar o idioma falado"
+  },
+  "recommended": {
+    "message": "(recomendado)"
+  },
+  "deepCheckHelp": {
+    "message": "Lê o idioma falado que o próprio YouTube registou para cada vídeo (o idioma das legendas automáticas e a faixa de áudio original). Assim, deteta vídeos com títulos traduzidos ou em inglês. A página de cada vídeo novo é carregada do YouTube uma única vez, e o resultado fica guardado neste dispositivo. Desative para julgar apenas pelos títulos."
+  },
+  "blockDubbedTitle": {
+    "message": "Ocultar também vídeos com uma faixa dobrada num idioma bloqueado"
+  },
+  "blockDubbedHelp": {
+    "message": "Por exemplo, um vídeo em inglês que também oferece áudio dobrado em hindi."
+  },
+  "hideUntilCheckedTitle": {
+    "message": "Ocultar os vídeos até serem verificados"
+  },
+  "hideUntilCheckedHelp": {
+    "message": "Evita ver um vídeo durante um instante antes de ser ocultado. Os vídeos podem demorar um pouco a aparecer."
+  },
+  "hiddenHeading": {
+    "message": "Vídeos ocultos"
+  },
+  "actionHide": {
+    "message": "Removê-los completamente"
+  },
+  "actionDim": {
+    "message": "Esbatê-los com uma etiqueta a explicar o motivo"
+  },
+  "troubleshootingHeading": {
+    "message": "Solução de problemas"
+  },
+  "debugTitle": {
+    "message": "Mostrar o raciocínio do LangBlock em cada vídeo"
+  },
+  "debugHelp": {
+    "message": "Adiciona a cada vídeo uma pequena etiqueta com o que o LangBlock encontrou e esbate os vídeos ocultos em vez de os remover. Um vídeo sem etiqueta não foi reconhecido pelo LangBlock. As etiquetas estão em inglês. Desative quando terminar."
+  },
+  "storedHeading": {
+    "message": "Armazenado neste dispositivo"
+  },
+  "cacheCountLabel": {
+    "message": "Vídeos lembrados para não serem verificados de novo:"
+  },
+  "clearCache": {
+    "message": "Esquecer os vídeos lembrados"
+  },
+  "cacheCleared": {
+    "message": "Concluído."
+  },
+  "footerFree": {
+    "message": "O LangBlock é gratuito. Não recolhe dados e não envia nada para lado nenhum, exceto os pedidos normais ao YouTube."
+  },
+  "donate": {
+    "message": "♥ Apoie o LangBlock"
+  },
+  "donateShort": {
+    "message": "♥ Apoiar"
+  },
+  "allSettings": {
+    "message": "Todas as definições"
+  },
+  "statusOff": {
+    "message": "O LangBlock está desativado."
+  },
+  "statusPick": {
+    "message": "Escolha um idioma abaixo para começar."
+  },
+  "statusInactive": {
+    "message": "Sem filtro nesta página (veja Todas as definições)."
+  },
+  "statusHidden": {
+    "message": "Ocultos nesta página: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusPending": {
+    "message": "Ainda em verificação: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusOpenYoutube": {
+    "message": "Abra o YouTube e o LangBlock filtra automaticamente."
+  },
+  "hiddenBy": {
+    "message": "Oculto pelo LangBlock: $WHY$",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "whyTitle": {
+    "message": "título"
+  },
+  "whySpoken": {
+    "message": "falado"
+  },
+  "whyDub": {
+    "message": "áudio dobrado"
+  },
+  "whyDescription": {
+    "message": "descrição"
+  }
+}

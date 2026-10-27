@@ -247,16 +247,17 @@
     card.setAttribute("data-langblock", state);
     if (verdict) {
       const how = {
-        title: "title",
-        script: "title",
-        name: "title",
-        audio: "spoken",
-        captions: "spoken",
-        dub: "dubbed audio",
-        description: "description",
+        title: "whyTitle",
+        script: "whyTitle",
+        name: "whyTitle",
+        audio: "whySpoken",
+        captions: "whySpoken",
+        dub: "whyDub",
+        description: "whyDescription",
       };
-      const why = LB.languageName(verdict.lang) + (how[verdict.source] ? ` (${how[verdict.source]})` : "");
-      card.setAttribute("data-langblock-why", `Hidden by LangBlock: ${why}`);
+      const name = LB.localName(verdict.lang);
+      const why = how[verdict.source] ? `${name} (${LB.t(how[verdict.source])})` : name;
+      card.setAttribute("data-langblock-why", LB.t("hiddenBy", [why]));
     } else {
       card.removeAttribute("data-langblock-why");
     }

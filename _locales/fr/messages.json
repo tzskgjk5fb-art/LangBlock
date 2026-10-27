@@ -1,0 +1,225 @@
+{
+  "extDescription": {
+    "message": "Masque les vidéos YouTube parlées dans les langues choisies, dans la recherche et les suggestions. Gratuit, privé, sans collecte."
+  },
+  "actionTitle": {
+    "message": "Paramètres de LangBlock"
+  },
+  "optionsTitle": {
+    "message": "Paramètres de LangBlock"
+  },
+  "toggleTitle": {
+    "message": "Activer ou désactiver LangBlock"
+  },
+  "filteringOn": {
+    "message": "Filtrage activé"
+  },
+  "lede": {
+    "message": "Masquez les vidéos YouTube parlées dans les langues de votre choix. Tout se passe sur votre appareil."
+  },
+  "blockedHeading": {
+    "message": "Langues bloquées"
+  },
+  "noLanguages": {
+    "message": "Aucune langue bloquée pour l'instant. Choisissez-en une ci-dessous pour commencer."
+  },
+  "blockAllExcept": {
+    "message": "Tout bloquer sauf $LANG$",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "unblockAll": {
+    "message": "Tout débloquer"
+  },
+  "undo": {
+    "message": "Annuler"
+  },
+  "blockedAllMsg": {
+    "message": "Toutes les langues sont bloquées sauf $LANG$.",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "unblockedAllMsg": {
+    "message": "Toutes les langues sont débloquées."
+  },
+  "blockingSummary": {
+    "message": "Langues bloquées : $COUNT$ sur $TOTAL$.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "blockingSummaryExcept": {
+    "message": "Langues bloquées : $COUNT$ sur $TOTAL$. Non bloquées : $LIST$.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "list": {
+        "content": "$3"
+      }
+    }
+  },
+  "stopBlocking": {
+    "message": "Ne plus bloquer : $LANG$",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "searchPlaceholder": {
+    "message": "Rechercher une langue…"
+  },
+  "searchLabel": {
+    "message": "Rechercher une langue"
+  },
+  "addLanguagePlaceholder": {
+    "message": "Ajouter une langue…"
+  },
+  "noMatch": {
+    "message": "Aucune langue correspondante."
+  },
+  "whereHeading": {
+    "message": "Où filtrer"
+  },
+  "surfaceSearch": {
+    "message": "Résultats de recherche"
+  },
+  "surfaceHome": {
+    "message": "Page d'accueil, abonnements et autres flux"
+  },
+  "surfaceWatch": {
+    "message": "Suggestions à côté d'une vidéo"
+  },
+  "surfaceChannel": {
+    "message": "Pages des chaînes"
+  },
+  "detectionHeading": {
+    "message": "Détection"
+  },
+  "deepCheckTitle": {
+    "message": "Vérifier la langue parlée"
+  },
+  "recommended": {
+    "message": "(recommandé)"
+  },
+  "deepCheckHelp": {
+    "message": "Lit la langue parlée que YouTube a lui-même enregistrée pour chaque vidéo (la langue de ses sous-titres automatiques et la piste audio d'origine). Cela repère les vidéos dont le titre est traduit ou en anglais. La page de chaque nouvelle vidéo est chargée une seule fois depuis YouTube, et le résultat est mémorisé sur cet appareil. Désactivez cette option pour juger uniquement d'après les titres."
+  },
+  "blockDubbedTitle": {
+    "message": "Masquer aussi les vidéos ayant une piste doublée dans une langue bloquée"
+  },
+  "blockDubbedHelp": {
+    "message": "Par exemple, une vidéo en anglais qui propose aussi un doublage en hindi."
+  },
+  "hideUntilCheckedTitle": {
+    "message": "Masquer les vidéos jusqu'à leur vérification"
+  },
+  "hideUntilCheckedHelp": {
+    "message": "Évite d'apercevoir une vidéo avant qu'elle soit masquée. Les vidéos peuvent mettre un instant à apparaître."
+  },
+  "hiddenHeading": {
+    "message": "Vidéos masquées"
+  },
+  "actionHide": {
+    "message": "Les retirer complètement"
+  },
+  "actionDim": {
+    "message": "Les estomper avec une étiquette indiquant pourquoi"
+  },
+  "troubleshootingHeading": {
+    "message": "Dépannage"
+  },
+  "debugTitle": {
+    "message": "Afficher le raisonnement de LangBlock sur chaque vidéo"
+  },
+  "debugHelp": {
+    "message": "Ajoute à chaque vidéo une petite étiquette indiquant ce que LangBlock a trouvé, et estompe les vidéos masquées au lieu de les retirer. Une vidéo sans étiquette n'a pas été reconnue par LangBlock. Les étiquettes sont en anglais. Désactivez cette option une fois terminé."
+  },
+  "storedHeading": {
+    "message": "Stocké sur cet appareil"
+  },
+  "cacheCountLabel": {
+    "message": "Vidéos mémorisées pour ne pas les revérifier :"
+  },
+  "clearCache": {
+    "message": "Oublier les vidéos mémorisées"
+  },
+  "cacheCleared": {
+    "message": "C'est fait."
+  },
+  "footerFree": {
+    "message": "LangBlock est gratuit. Il ne collecte aucune donnée et n'envoie rien nulle part, à part les requêtes normales vers YouTube."
+  },
+  "donate": {
+    "message": "♥ Soutenir LangBlock"
+  },
+  "donateShort": {
+    "message": "♥ Soutenir"
+  },
+  "allSettings": {
+    "message": "Tous les paramètres"
+  },
+  "statusOff": {
+    "message": "LangBlock est désactivé."
+  },
+  "statusPick": {
+    "message": "Choisissez une langue ci-dessous pour commencer."
+  },
+  "statusInactive": {
+    "message": "Pas de filtrage sur cette page (voir Tous les paramètres)."
+  },
+  "statusHidden": {
+    "message": "Masquées sur cette page : $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusPending": {
+    "message": "En cours de vérification : $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusOpenYoutube": {
+    "message": "Ouvrez YouTube : LangBlock le filtre automatiquement."
+  },
+  "hiddenBy": {
+    "message": "Masquée par LangBlock : $WHY$",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "whyTitle": {
+    "message": "titre"
+  },
+  "whySpoken": {
+    "message": "parlée"
+  },
+  "whyDub": {
+    "message": "doublage"
+  },
+  "whyDescription": {
+    "message": "description"
+  }
+}

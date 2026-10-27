@@ -1,0 +1,225 @@
+{
+  "extDescription": {
+    "message": "在搜尋和推薦中隱藏用你所選語言講述的 YouTube 影片。免費、私密，不收集任何資料。"
+  },
+  "actionTitle": {
+    "message": "LangBlock 設定"
+  },
+  "optionsTitle": {
+    "message": "LangBlock 設定"
+  },
+  "toggleTitle": {
+    "message": "開啟或關閉 LangBlock"
+  },
+  "filteringOn": {
+    "message": "過濾已開啟"
+  },
+  "lede": {
+    "message": "隱藏用你所選語言講述的 YouTube 影片。一切都在你的裝置上執行。"
+  },
+  "blockedHeading": {
+    "message": "已封鎖的語言"
+  },
+  "noLanguages": {
+    "message": "尚未封鎖任何語言。從下方選擇一種語言即可開始。"
+  },
+  "blockAllExcept": {
+    "message": "封鎖$LANG$以外的所有語言",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "unblockAll": {
+    "message": "全部解除封鎖"
+  },
+  "undo": {
+    "message": "復原"
+  },
+  "blockedAllMsg": {
+    "message": "正在封鎖$LANG$以外的所有語言。",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "unblockedAllMsg": {
+    "message": "已解除封鎖所有語言。"
+  },
+  "blockingSummary": {
+    "message": "已封鎖語言：$COUNT$/$TOTAL$。",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "blockingSummaryExcept": {
+    "message": "已封鎖語言：$COUNT$/$TOTAL$。未封鎖：$LIST$。",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "list": {
+        "content": "$3"
+      }
+    }
+  },
+  "stopBlocking": {
+    "message": "解除封鎖$LANG$",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "searchPlaceholder": {
+    "message": "搜尋語言…"
+  },
+  "searchLabel": {
+    "message": "搜尋語言"
+  },
+  "addLanguagePlaceholder": {
+    "message": "新增語言…"
+  },
+  "noMatch": {
+    "message": "沒有相符的語言。"
+  },
+  "whereHeading": {
+    "message": "過濾範圍"
+  },
+  "surfaceSearch": {
+    "message": "搜尋結果"
+  },
+  "surfaceHome": {
+    "message": "首頁、訂閱內容和其他動態"
+  },
+  "surfaceWatch": {
+    "message": "影片旁邊的推薦"
+  },
+  "surfaceChannel": {
+    "message": "頻道頁面"
+  },
+  "detectionHeading": {
+    "message": "偵測"
+  },
+  "deepCheckTitle": {
+    "message": "檢查影片中所說的語言"
+  },
+  "recommended": {
+    "message": "（建議）"
+  },
+  "deepCheckHelp": {
+    "message": "讀取 YouTube 本身為每部影片記錄的口說語言（自動字幕的語言和原始音軌）。這樣即使標題經過翻譯或是英文，也能辨識出來。每部新影片的頁面只會從 YouTube 載入一次，結果會儲存在這台裝置上。關閉此選項則只依標題判斷。"
+  },
+  "blockDubbedTitle": {
+    "message": "同時隱藏含有已封鎖語言配音音軌的影片"
+  },
+  "blockDubbedHelp": {
+    "message": "例如，一部同時提供印地語配音的英語影片。"
+  },
+  "hideUntilCheckedTitle": {
+    "message": "在檢查完成前隱藏影片"
+  },
+  "hideUntilCheckedHelp": {
+    "message": "避免影片在被隱藏前短暫出現。影片可能需要片刻才會顯示。"
+  },
+  "hiddenHeading": {
+    "message": "被隱藏的影片"
+  },
+  "actionHide": {
+    "message": "完全移除"
+  },
+  "actionDim": {
+    "message": "淡化顯示，並附上說明原因的標籤"
+  },
+  "troubleshootingHeading": {
+    "message": "疑難排解"
+  },
+  "debugTitle": {
+    "message": "在每部影片上顯示 LangBlock 的判斷依據"
+  },
+  "debugHelp": {
+    "message": "為每部影片加上一個小標籤，說明 LangBlock 找到了什麼，並將被隱藏的影片淡化顯示而非移除。沒有標籤的影片表示 LangBlock 沒有辨識出它。標籤為英文。用完後請關閉。"
+  },
+  "storedHeading": {
+    "message": "儲存在這台裝置上"
+  },
+  "cacheCountLabel": {
+    "message": "已記住的影片（不會再次檢查）："
+  },
+  "clearCache": {
+    "message": "清除已記住的影片"
+  },
+  "cacheCleared": {
+    "message": "已完成。"
+  },
+  "footerFree": {
+    "message": "LangBlock 是免費的。它不收集任何資料，除了對 YouTube 的正常請求外，不會將任何內容傳送到任何地方。"
+  },
+  "donate": {
+    "message": "♥ 支持 LangBlock"
+  },
+  "donateShort": {
+    "message": "♥ 支持"
+  },
+  "allSettings": {
+    "message": "所有設定"
+  },
+  "statusOff": {
+    "message": "LangBlock 已關閉。"
+  },
+  "statusPick": {
+    "message": "從下方選擇一種語言即可開始。"
+  },
+  "statusInactive": {
+    "message": "此頁面未進行過濾（請查看所有設定）。"
+  },
+  "statusHidden": {
+    "message": "此頁面已隱藏：$COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusPending": {
+    "message": "仍在檢查：$COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusOpenYoutube": {
+    "message": "開啟 YouTube，LangBlock 會自動進行過濾。"
+  },
+  "hiddenBy": {
+    "message": "已被 LangBlock 隱藏：$WHY$",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "whyTitle": {
+    "message": "標題"
+  },
+  "whySpoken": {
+    "message": "口說"
+  },
+  "whyDub": {
+    "message": "配音"
+  },
+  "whyDescription": {
+    "message": "說明"
+  }
+}

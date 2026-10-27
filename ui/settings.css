@@ -128,7 +128,8 @@ small {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 3px 4px 3px 10px;
+  padding-block: 3px;
+  padding-inline: 10px 4px;
   border-radius: 999px;
   background: var(--chip);
   color: var(--chip-text);
@@ -184,7 +185,7 @@ input[type="search"] {
 }
 
 .bulk-msg .link {
-  margin-left: 6px;
+  margin-inline-start: 6px;
 }
 
 .chips .summary {
@@ -305,7 +306,7 @@ input[type="search"] {
   content: "";
   position: absolute;
   top: 3px;
-  left: 3px;
+  inset-inline-start: 3px;
   width: 18px;
   height: 18px;
   border-radius: 50%;
@@ -319,6 +320,10 @@ input[type="search"] {
 
 .switch input:checked + .slider::after {
   transform: translateX(18px);
+}
+
+[dir="rtl"] .switch input:checked + .slider::after {
+  transform: translateX(-18px);
 }
 
 .switch input:focus-visible + .slider {

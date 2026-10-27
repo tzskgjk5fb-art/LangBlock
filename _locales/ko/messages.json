@@ -1,0 +1,225 @@
+{
+  "extDescription": {
+    "message": "선택한 언어로 말하는 YouTube 동영상을 검색 결과와 추천에서 숨깁니다. 무료, 비공개, 데이터 수집 없음."
+  },
+  "actionTitle": {
+    "message": "LangBlock 설정"
+  },
+  "optionsTitle": {
+    "message": "LangBlock 설정"
+  },
+  "toggleTitle": {
+    "message": "LangBlock 켜기/끄기"
+  },
+  "filteringOn": {
+    "message": "필터 켜짐"
+  },
+  "lede": {
+    "message": "선택한 언어로 말하는 YouTube 동영상을 숨깁니다. 모든 작업은 이 기기에서 처리됩니다."
+  },
+  "blockedHeading": {
+    "message": "차단한 언어"
+  },
+  "noLanguages": {
+    "message": "아직 차단한 언어가 없습니다. 아래에서 언어를 골라 시작하세요."
+  },
+  "blockAllExcept": {
+    "message": "$LANG$ 외 모두 차단",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "unblockAll": {
+    "message": "모두 차단 해제"
+  },
+  "undo": {
+    "message": "실행 취소"
+  },
+  "blockedAllMsg": {
+    "message": "$LANG$ 외 모든 언어를 차단하고 있습니다.",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "unblockedAllMsg": {
+    "message": "모든 언어의 차단을 해제했습니다."
+  },
+  "blockingSummary": {
+    "message": "차단한 언어: $TOTAL$개 중 $COUNT$개.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "blockingSummaryExcept": {
+    "message": "차단한 언어: $TOTAL$개 중 $COUNT$개. 차단하지 않은 언어: $LIST$.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "list": {
+        "content": "$3"
+      }
+    }
+  },
+  "stopBlocking": {
+    "message": "$LANG$ 차단 해제",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "searchPlaceholder": {
+    "message": "언어 검색…"
+  },
+  "searchLabel": {
+    "message": "언어 검색"
+  },
+  "addLanguagePlaceholder": {
+    "message": "언어 추가…"
+  },
+  "noMatch": {
+    "message": "일치하는 언어가 없습니다."
+  },
+  "whereHeading": {
+    "message": "필터링할 위치"
+  },
+  "surfaceSearch": {
+    "message": "검색 결과"
+  },
+  "surfaceHome": {
+    "message": "홈, 구독 및 기타 피드"
+  },
+  "surfaceWatch": {
+    "message": "동영상 옆의 추천 동영상"
+  },
+  "surfaceChannel": {
+    "message": "채널 페이지"
+  },
+  "detectionHeading": {
+    "message": "감지"
+  },
+  "deepCheckTitle": {
+    "message": "말하는 언어 확인"
+  },
+  "recommended": {
+    "message": "(권장)"
+  },
+  "deepCheckHelp": {
+    "message": "YouTube가 각 동영상에 직접 기록한 음성 언어(자동 자막 언어와 원본 오디오 트랙)를 읽습니다. 그래서 제목이 번역되었거나 영어로 된 동영상도 찾아냅니다. 새 동영상의 페이지는 YouTube에서 한 번만 불러오며, 결과는 이 기기에 저장됩니다. 제목만으로 판단하려면 끄세요."
+  },
+  "blockDubbedTitle": {
+    "message": "차단한 언어의 더빙 트랙이 있는 동영상도 숨기기"
+  },
+  "blockDubbedHelp": {
+    "message": "예: 힌디어 더빙 오디오도 제공하는 영어 동영상."
+  },
+  "hideUntilCheckedTitle": {
+    "message": "확인이 끝날 때까지 동영상 숨기기"
+  },
+  "hideUntilCheckedHelp": {
+    "message": "숨겨지기 전에 동영상이 잠깐 보이는 것을 막습니다. 동영상이 나타나기까지 잠시 걸릴 수 있습니다."
+  },
+  "hiddenHeading": {
+    "message": "숨긴 동영상"
+  },
+  "actionHide": {
+    "message": "완전히 제거"
+  },
+  "actionDim": {
+    "message": "이유를 알려 주는 라벨과 함께 흐리게 표시"
+  },
+  "troubleshootingHeading": {
+    "message": "문제 해결"
+  },
+  "debugTitle": {
+    "message": "모든 동영상에 LangBlock의 판단 근거 표시"
+  },
+  "debugHelp": {
+    "message": "각 동영상에 LangBlock이 찾은 정보를 알려 주는 작은 라벨을 붙이고, 숨긴 동영상은 제거하지 않고 흐리게 표시합니다. 라벨이 없는 동영상은 LangBlock이 인식하지 못한 것입니다. 라벨은 영어로 표시됩니다. 다 끝나면 끄세요."
+  },
+  "storedHeading": {
+    "message": "이 기기에 저장된 항목"
+  },
+  "cacheCountLabel": {
+    "message": "다시 확인하지 않도록 기억한 동영상:"
+  },
+  "clearCache": {
+    "message": "기억한 동영상 지우기"
+  },
+  "cacheCleared": {
+    "message": "완료되었습니다."
+  },
+  "footerFree": {
+    "message": "LangBlock은 무료입니다. 데이터를 수집하지 않으며 YouTube에 보내는 일반 요청 외에는 어디에도 아무것도 보내지 않습니다."
+  },
+  "donate": {
+    "message": "♥ LangBlock 후원하기"
+  },
+  "donateShort": {
+    "message": "♥ 후원"
+  },
+  "allSettings": {
+    "message": "전체 설정"
+  },
+  "statusOff": {
+    "message": "LangBlock이 꺼져 있습니다."
+  },
+  "statusPick": {
+    "message": "아래에서 언어를 골라 시작하세요."
+  },
+  "statusInactive": {
+    "message": "이 페이지에서는 필터링하지 않습니다(전체 설정 참고)."
+  },
+  "statusHidden": {
+    "message": "이 페이지에서 숨긴 동영상: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusPending": {
+    "message": "확인 중: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusOpenYoutube": {
+    "message": "YouTube를 열면 LangBlock이 자동으로 필터링합니다."
+  },
+  "hiddenBy": {
+    "message": "LangBlock이 숨김: $WHY$",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "whyTitle": {
+    "message": "제목"
+  },
+  "whySpoken": {
+    "message": "음성"
+  },
+  "whyDub": {
+    "message": "더빙"
+  },
+  "whyDescription": {
+    "message": "설명"
+  }
+}

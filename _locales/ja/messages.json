@@ -1,0 +1,225 @@
+{
+  "extDescription": {
+    "message": "選んだ言語で話されている YouTube 動画を、検索結果とおすすめから非表示にします。無料、プライベート、データ収集なし。"
+  },
+  "actionTitle": {
+    "message": "LangBlock の設定"
+  },
+  "optionsTitle": {
+    "message": "LangBlock の設定"
+  },
+  "toggleTitle": {
+    "message": "LangBlock のオン／オフ"
+  },
+  "filteringOn": {
+    "message": "フィルタ オン"
+  },
+  "lede": {
+    "message": "選んだ言語で話されている YouTube 動画を非表示にします。処理はすべてこのデバイス上で行われます。"
+  },
+  "blockedHeading": {
+    "message": "ブロックする言語"
+  },
+  "noLanguages": {
+    "message": "まだ言語がブロックされていません。下から言語を選んで始めましょう。"
+  },
+  "blockAllExcept": {
+    "message": "$LANG$以外をすべてブロック",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "unblockAll": {
+    "message": "すべてブロック解除"
+  },
+  "undo": {
+    "message": "元に戻す"
+  },
+  "blockedAllMsg": {
+    "message": "$LANG$以外のすべての言語をブロックしています。",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "unblockedAllMsg": {
+    "message": "すべての言語のブロックを解除しました。"
+  },
+  "blockingSummary": {
+    "message": "ブロック中の言語：$COUNT$ / $TOTAL$。",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "blockingSummaryExcept": {
+    "message": "ブロック中の言語：$COUNT$ / $TOTAL$。ブロックしていない言語：$LIST$。",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "list": {
+        "content": "$3"
+      }
+    }
+  },
+  "stopBlocking": {
+    "message": "$LANG$のブロックを解除",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "searchPlaceholder": {
+    "message": "言語を検索…"
+  },
+  "searchLabel": {
+    "message": "言語を検索"
+  },
+  "addLanguagePlaceholder": {
+    "message": "言語を追加…"
+  },
+  "noMatch": {
+    "message": "一致する言語がありません。"
+  },
+  "whereHeading": {
+    "message": "フィルタする場所"
+  },
+  "surfaceSearch": {
+    "message": "検索結果"
+  },
+  "surfaceHome": {
+    "message": "ホーム、登録チャンネル、その他のフィード"
+  },
+  "surfaceWatch": {
+    "message": "動画の横に表示されるおすすめ"
+  },
+  "surfaceChannel": {
+    "message": "チャンネルページ"
+  },
+  "detectionHeading": {
+    "message": "検出"
+  },
+  "deepCheckTitle": {
+    "message": "話されている言語を確認する"
+  },
+  "recommended": {
+    "message": "（推奨）"
+  },
+  "deepCheckHelp": {
+    "message": "YouTube 自身が各動画に記録している話し言葉の言語（自動字幕の言語と元の音声トラック）を読み取ります。これにより、タイトルが翻訳された動画や英語タイトルの動画も見つけられます。新しい動画のページは YouTube から一度だけ読み込まれ、結果はこのデバイスに保存されます。タイトルだけで判断する場合はオフにしてください。"
+  },
+  "blockDubbedTitle": {
+    "message": "ブロックした言語の吹き替え音声がある動画も非表示にする"
+  },
+  "blockDubbedHelp": {
+    "message": "例：ヒンディー語の吹き替え音声もある英語の動画。"
+  },
+  "hideUntilCheckedTitle": {
+    "message": "確認が終わるまで動画を非表示にする"
+  },
+  "hideUntilCheckedHelp": {
+    "message": "非表示になる前に動画が一瞬見えてしまうのを防ぎます。動画が表示されるまで少し時間がかかることがあります。"
+  },
+  "hiddenHeading": {
+    "message": "非表示にした動画"
+  },
+  "actionHide": {
+    "message": "完全に取り除く"
+  },
+  "actionDim": {
+    "message": "理由を示すラベル付きで薄く表示する"
+  },
+  "troubleshootingHeading": {
+    "message": "トラブルシューティング"
+  },
+  "debugTitle": {
+    "message": "すべての動画に LangBlock の判断理由を表示する"
+  },
+  "debugHelp": {
+    "message": "各動画に LangBlock が見つけた情報を示す小さなラベルを付け、非表示の動画は取り除かずに薄く表示します。ラベルのない動画は LangBlock が認識できなかったものです。ラベルは英語で表示されます。終わったらオフにしてください。"
+  },
+  "storedHeading": {
+    "message": "このデバイスに保存されているデータ"
+  },
+  "cacheCountLabel": {
+    "message": "再確認しないように記憶している動画："
+  },
+  "clearCache": {
+    "message": "記憶した動画を消去"
+  },
+  "cacheCleared": {
+    "message": "完了しました。"
+  },
+  "footerFree": {
+    "message": "LangBlock は無料です。データを収集せず、YouTube への通常のリクエスト以外はどこにも何も送信しません。"
+  },
+  "donate": {
+    "message": "♥ LangBlock を支援"
+  },
+  "donateShort": {
+    "message": "♥ 支援"
+  },
+  "allSettings": {
+    "message": "すべての設定"
+  },
+  "statusOff": {
+    "message": "LangBlock はオフです。"
+  },
+  "statusPick": {
+    "message": "下から言語を選んで始めましょう。"
+  },
+  "statusInactive": {
+    "message": "このページではフィルタしていません（「すべての設定」を参照）。"
+  },
+  "statusHidden": {
+    "message": "このページで非表示：$COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusPending": {
+    "message": "確認中：$COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusOpenYoutube": {
+    "message": "YouTube を開くと、LangBlock が自動的にフィルタします。"
+  },
+  "hiddenBy": {
+    "message": "LangBlock が非表示：$WHY$",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "whyTitle": {
+    "message": "タイトル"
+  },
+  "whySpoken": {
+    "message": "音声"
+  },
+  "whyDub": {
+    "message": "吹き替え"
+  },
+  "whyDescription": {
+    "message": "説明"
+  }
+}

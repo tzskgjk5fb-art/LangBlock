@@ -32,6 +32,7 @@ FEATURES
 • Hide videos completely, or fade them out with a label saying why
 • Works on www.youtube.com and m.youtube.com (Firefox for Android)
 • Light and dark mode
+• Settings in 17 languages, following your browser's language
 
 FREE AND PRIVATE
 LangBlock is completely free with no ads, no accounts and no tracking. It collects no data and sends nothing to the developer or any third party. A small, optional "Support LangBlock" link lets you donate if you'd like to.

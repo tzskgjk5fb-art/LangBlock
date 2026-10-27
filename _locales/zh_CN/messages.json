@@ -1,0 +1,225 @@
+{
+  "extDescription": {
+    "message": "在搜索和推荐中隐藏用你所选语言讲述的 YouTube 视频。免费、私密，不收集任何数据。"
+  },
+  "actionTitle": {
+    "message": "LangBlock 设置"
+  },
+  "optionsTitle": {
+    "message": "LangBlock 设置"
+  },
+  "toggleTitle": {
+    "message": "开启或关闭 LangBlock"
+  },
+  "filteringOn": {
+    "message": "过滤已开启"
+  },
+  "lede": {
+    "message": "隐藏用你所选语言讲述的 YouTube 视频。一切都在你的设备上运行。"
+  },
+  "blockedHeading": {
+    "message": "已屏蔽的语言"
+  },
+  "noLanguages": {
+    "message": "还没有屏蔽任何语言。从下方选择一种语言即可开始。"
+  },
+  "blockAllExcept": {
+    "message": "屏蔽除$LANG$以外的所有语言",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "unblockAll": {
+    "message": "全部取消屏蔽"
+  },
+  "undo": {
+    "message": "撤销"
+  },
+  "blockedAllMsg": {
+    "message": "正在屏蔽除$LANG$以外的所有语言。",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "unblockedAllMsg": {
+    "message": "已取消屏蔽所有语言。"
+  },
+  "blockingSummary": {
+    "message": "已屏蔽语言：$COUNT$/$TOTAL$。",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "blockingSummaryExcept": {
+    "message": "已屏蔽语言：$COUNT$/$TOTAL$。未屏蔽：$LIST$。",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "list": {
+        "content": "$3"
+      }
+    }
+  },
+  "stopBlocking": {
+    "message": "取消屏蔽$LANG$",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "searchPlaceholder": {
+    "message": "搜索语言…"
+  },
+  "searchLabel": {
+    "message": "搜索语言"
+  },
+  "addLanguagePlaceholder": {
+    "message": "添加语言…"
+  },
+  "noMatch": {
+    "message": "没有匹配的语言。"
+  },
+  "whereHeading": {
+    "message": "过滤范围"
+  },
+  "surfaceSearch": {
+    "message": "搜索结果"
+  },
+  "surfaceHome": {
+    "message": "首页、订阅内容和其他信息流"
+  },
+  "surfaceWatch": {
+    "message": "视频旁边的推荐"
+  },
+  "surfaceChannel": {
+    "message": "频道页面"
+  },
+  "detectionHeading": {
+    "message": "检测"
+  },
+  "deepCheckTitle": {
+    "message": "检查视频中所说的语言"
+  },
+  "recommended": {
+    "message": "（推荐）"
+  },
+  "deepCheckHelp": {
+    "message": "读取 YouTube 自己为每个视频记录的口语语言（自动字幕的语言和原始音轨）。这样即使标题经过翻译或是英文，也能识别出来。每个新视频的页面只会从 YouTube 加载一次，结果会保存在这台设备上。关闭此选项则只根据标题判断。"
+  },
+  "blockDubbedTitle": {
+    "message": "同时隐藏带有已屏蔽语言配音音轨的视频"
+  },
+  "blockDubbedHelp": {
+    "message": "例如，一个同时提供印地语配音的英语视频。"
+  },
+  "hideUntilCheckedTitle": {
+    "message": "在检查完成前隐藏视频"
+  },
+  "hideUntilCheckedHelp": {
+    "message": "避免视频在被隐藏前短暂出现。视频可能需要片刻才会显示。"
+  },
+  "hiddenHeading": {
+    "message": "被隐藏的视频"
+  },
+  "actionHide": {
+    "message": "完全移除"
+  },
+  "actionDim": {
+    "message": "淡化显示，并附上说明原因的标签"
+  },
+  "troubleshootingHeading": {
+    "message": "问题排查"
+  },
+  "debugTitle": {
+    "message": "在每个视频上显示 LangBlock 的判断依据"
+  },
+  "debugHelp": {
+    "message": "为每个视频添加一个小标签，说明 LangBlock 找到了什么，并将被隐藏的视频淡化显示而不是移除。没有标签的视频表示 LangBlock 没有识别出它。标签为英文。用完后请关闭。"
+  },
+  "storedHeading": {
+    "message": "保存在这台设备上"
+  },
+  "cacheCountLabel": {
+    "message": "已记住的视频（不会再次检查）："
+  },
+  "clearCache": {
+    "message": "清除已记住的视频"
+  },
+  "cacheCleared": {
+    "message": "已完成。"
+  },
+  "footerFree": {
+    "message": "LangBlock 是免费的。它不收集任何数据，除了对 YouTube 的正常请求外，不会向任何地方发送任何内容。"
+  },
+  "donate": {
+    "message": "♥ 支持 LangBlock"
+  },
+  "donateShort": {
+    "message": "♥ 支持"
+  },
+  "allSettings": {
+    "message": "全部设置"
+  },
+  "statusOff": {
+    "message": "LangBlock 已关闭。"
+  },
+  "statusPick": {
+    "message": "从下方选择一种语言即可开始。"
+  },
+  "statusInactive": {
+    "message": "此页面未进行过滤（请查看全部设置）。"
+  },
+  "statusHidden": {
+    "message": "此页面已隐藏：$COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusPending": {
+    "message": "仍在检查：$COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusOpenYoutube": {
+    "message": "打开 YouTube，LangBlock 会自动进行过滤。"
+  },
+  "hiddenBy": {
+    "message": "已被 LangBlock 隐藏：$WHY$",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "whyTitle": {
+    "message": "标题"
+  },
+  "whySpoken": {
+    "message": "口语"
+  },
+  "whyDub": {
+    "message": "配音"
+  },
+  "whyDescription": {
+    "message": "简介"
+  }
+}

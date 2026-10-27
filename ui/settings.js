@@ -8,9 +8,24 @@
   const $ = (id) => document.getElementById(id);
   const isPopup = document.body.classList.contains("page-popup");
 
+  const t = LB.t;
+
   let settings = LB.sanitizeSettings(null);
 
-  const sortedLanguages = [...LB.LANGUAGES].sort((a, b) => a.name.localeCompare(b.name));
+  // Lower case without accents, so "espanol" finds "español".
+  const fold = (text) => text.normalize("NFD").replace(/\p{M}/gu, "").toLocaleLowerCase();
+  const capitalize = (text) => text.charAt(0).toLocaleUpperCase(LB.UI_LOCALE) + text.slice(1);
+
+  // Names in the user's language for display, and every name a language
+  // can be searched by.
+  const sortedLanguages = LB.LANGUAGES.map((l) => {
+    const local = capitalize(LB.localName(l.code));
+    return { code: l.code, name: local, search: [local, l.name].map(fold) };
+  }).sort((a, b) => a.name.localeCompare(b.name, LB.UI_LOCALE));
+  const displayName = (code) => {
+    const lang = sortedLanguages.find((l) => l.code === code);
+    return lang ? lang.name : LB.languageName(code);
+  };
   // More chips than this would fill the page, so a summary is shown instead.
   const MAX_CHIPS = 12;
 
@@ -50,6 +65,19 @@
     save();
   }
 
+  function localize() {
+    document.documentElement.lang = (t("@@ui_locale") || "en").replace("_", "-");
+    document.documentElement.dir = t("@@bidi_dir") === "rtl" ? "rtl" : "ltr";
+    for (const node of document.querySelectorAll("[data-i18n]")) {
+      node.textContent = t(node.dataset.i18n);
+    }
+    for (const attr of ["placeholder", "title", "aria-label"]) {
+      for (const node of document.querySelectorAll(`[data-i18n-${attr}]`)) {
+        node.setAttribute(attr, t(node.getAttribute(`data-i18n-${attr}`)));
+      }
+    }
+  }
+
   function el(tag, props = {}, text) {
     const node = document.createElement(tag);
     Object.assign(node, props);
@@ -63,17 +91,19 @@
     if (settings.blocked.length > MAX_CHIPS) {
       const blocked = new Set(settings.blocked);
       const open = sortedLanguages.filter((l) => !blocked.has(l.code)).map((l) => l.name);
-      let text = `Blocking ${blocked.size} of ${sortedLanguages.length} languages.`;
-      if (open.length > 0 && open.length <= 5) text += ` Not blocked: ${open.join(", ")}.`;
+      const counts = [String(blocked.size), String(sortedLanguages.length)];
+      const text = open.length > 0 && open.length <= 5
+        ? t("blockingSummaryExcept", [...counts, open.join(", ")])
+        : t("blockingSummary", counts);
       chips.append(el("span", { className: "summary" }, text));
       $("no-langs").hidden = true;
       return;
     }
     for (const code of settings.blocked) {
       const chip = el("span", { className: "chip" });
-      chip.append(el("span", {}, LB.languageName(code)));
-      const remove = el("button", { type: "button", className: "chip-x", title: "Stop blocking" }, "×");
-      remove.setAttribute("aria-label", `Stop blocking ${LB.languageName(code)}`);
+      chip.append(el("span", {}, displayName(code)));
+      const remove = el("button", { type: "button", className: "chip-x", title: t("stopBlocking", [displayName(code)]) }, "×");
+      remove.setAttribute("aria-label", t("stopBlocking", [displayName(code)]));
       remove.addEventListener("click", () => setBlocked(settings.blocked.filter((c) => c !== code)));
       chip.append(remove);
       chips.append(chip);
@@ -83,16 +113,16 @@
 
   function renderList() {
     const list = $("lang-list");
-    const q = $("lang-search").value.trim().toLowerCase();
+    const q = fold($("lang-search").value.trim());
     list.replaceChildren();
     const showAll = !isPopup || q || settings.blocked.length === 0;
     list.hidden = !showAll;
     if (!showAll) return;
     const blocked = new Set(settings.blocked);
     // Names that start with the query come first ("hin" -> Hindi before Chinese).
-    const rank = (l) => (!q || l.code === q || l.name.toLowerCase().startsWith(q) ? 0 : 1);
+    const rank = (l) => (!q || l.code === q || l.search.some((n) => n.startsWith(q)) ? 0 : 1);
     const matches = sortedLanguages
-      .filter((l) => !q || l.name.toLowerCase().includes(q) || l.code === q)
+      .filter((l) => !q || l.code === q || l.search.some((n) => n.includes(q)))
       .sort((a, b) => rank(a) - rank(b));
     for (const lang of matches) {
       const li = el("li");
@@ -108,7 +138,7 @@
       li.append(label);
       list.append(li);
     }
-    if (matches.length === 0) list.append(el("li", { className: "hint" }, "No matching language."));
+    if (matches.length === 0) list.append(el("li", { className: "hint" }, t("noMatch")));
   }
 
   function renderBulk() {
@@ -116,7 +146,7 @@
     const blockAll = $("block-all");
     if (ownLanguage) {
       blockAll.hidden = false;
-      blockAll.textContent = `Block all except ${LB.languageName(ownLanguage)}`;
+      blockAll.textContent = t("blockAllExcept", [LB.localName(ownLanguage)]);
       blockAll.disabled = blocked.size === allButOwn.length && allButOwn.every((c) => blocked.has(c));
     }
     $("unblock-all").disabled = blocked.size === 0;
@@ -125,7 +155,7 @@
     msg.replaceChildren();
     msg.hidden = !undo;
     if (!undo) return;
-    const back = el("button", { type: "button", className: "link" }, "Undo");
+    const back = el("button", { type: "button", className: "link" }, t("undo"));
     back.addEventListener("click", () => setBlocked(undo.blocked));
     msg.append(undo.message, back);
   }
@@ -154,9 +184,9 @@
     });
     $("lang-search").addEventListener("input", renderList);
     $("block-all").addEventListener("click", () =>
-      bulkSet(allButOwn, `Blocking every language except ${LB.languageName(ownLanguage)}.`)
+      bulkSet(allButOwn, t("blockedAllMsg", [LB.localName(ownLanguage)]))
     );
-    $("unblock-all").addEventListener("click", () => bulkSet([], "Unblocked all languages."));
+    $("unblock-all").addEventListener("click", () => bulkSet([], t("unblockedAllMsg")));
     for (const box of document.querySelectorAll("[data-surface]")) {
       box.addEventListener("change", () => {
         settings.surfaces = { ...settings.surfaces, [box.dataset.surface]: box.checked };
@@ -180,8 +210,8 @@
     }
     if ($("clear-cache")) {
       $("clear-cache").addEventListener("click", async () => {
-        const n = await LB.storage.clearCache();
-        $("cache-msg").textContent = ` Forgot ${n} videos.`;
+        await LB.storage.clearCache();
+        $("cache-msg").textContent = " " + t("cacheCleared");
         refreshCacheCount();
       });
     }
@@ -217,29 +247,29 @@
     const status = $("status");
     if (!status) return;
     if (!settings.enabled) {
-      status.textContent = "LangBlock is off.";
+      status.textContent = t("statusOff");
       return;
     }
     if (settings.blocked.length === 0) {
-      status.textContent = "Pick a language below to start.";
+      status.textContent = t("statusPick");
       return;
     }
     try {
       const [tab] = await api.tabs.query({ active: true, currentWindow: true });
       const stats = tab && (await api.tabs.sendMessage(tab.id, { type: "langblock:stats" }));
       if (!stats) throw new Error("no stats");
-      if (!stats.active) status.textContent = "Not filtering on this page (see All settings).";
+      if (!stats.active) status.textContent = t("statusInactive");
       else {
-        const n = stats.hidden;
-        status.textContent = `${n} video${n === 1 ? "" : "s"} hidden on this page` +
-          (stats.pending ? `, ${stats.pending} still being checked.` : ".");
+        status.textContent = t("statusHidden", [String(stats.hidden)]) +
+          (stats.pending ? " · " + t("statusPending", [String(stats.pending)]) : "");
       }
     } catch {
-      status.textContent = "Open YouTube and LangBlock filters it automatically.";
+      status.textContent = t("statusOpenYoutube");
     }
   }
 
   async function init() {
+    localize();
     settings = await LB.storage.loadSettings();
     bind();
     render();

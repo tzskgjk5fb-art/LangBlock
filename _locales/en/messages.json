@@ -14,5 +14,251 @@
   "actionTitle": {
     "message": "LangBlock settings",
     "description": "Toolbar button tooltip."
+  },
+  "optionsTitle": {
+    "message": "LangBlock settings",
+    "description": "Title of the settings page."
+  },
+  "toggleTitle": {
+    "message": "Turn LangBlock on or off",
+    "description": "Tooltip of the on/off switch."
+  },
+  "filteringOn": {
+    "message": "Filtering on",
+    "description": "Screen reader label of the on/off switch."
+  },
+  "lede": {
+    "message": "Hide YouTube videos spoken in the languages you pick. Everything runs on your device.",
+    "description": "Intro line on the settings page."
+  },
+  "blockedHeading": {
+    "message": "Blocked languages",
+    "description": "Section heading."
+  },
+  "noLanguages": {
+    "message": "No languages blocked yet. Pick one below to start."
+  },
+  "blockAllExcept": {
+    "message": "Block all except $LANG$",
+    "description": "Button. LANG is the browser's language, e.g. English.",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "unblockAll": {
+    "message": "Unblock all",
+    "description": "Button."
+  },
+  "undo": {
+    "message": "Undo",
+    "description": "Link after Block all / Unblock all."
+  },
+  "blockedAllMsg": {
+    "message": "Blocking every language except $LANG$.",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "unblockedAllMsg": {
+    "message": "Unblocked all languages."
+  },
+  "blockingSummary": {
+    "message": "Blocking $COUNT$ of $TOTAL$ languages.",
+    "description": "Shown instead of the list of chips when many languages are blocked.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "blockingSummaryExcept": {
+    "message": "Blocking $COUNT$ of $TOTAL$ languages. Not blocked: $LIST$.",
+    "description": "Same, when only a few languages are left. LIST is a comma-separated list of language names.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "list": {
+        "content": "$3"
+      }
+    }
+  },
+  "stopBlocking": {
+    "message": "Stop blocking $LANG$",
+    "description": "Tooltip of the × on a language chip.",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "searchPlaceholder": {
+    "message": "Search languages…"
+  },
+  "searchLabel": {
+    "message": "Search languages"
+  },
+  "addLanguagePlaceholder": {
+    "message": "Add a language…",
+    "description": "Search box placeholder in the toolbar popup."
+  },
+  "noMatch": {
+    "message": "No matching language."
+  },
+  "whereHeading": {
+    "message": "Where to filter",
+    "description": "Section heading."
+  },
+  "surfaceSearch": {
+    "message": "Search results"
+  },
+  "surfaceHome": {
+    "message": "Home page, subscriptions and other feeds"
+  },
+  "surfaceWatch": {
+    "message": "\"Up next\" suggestions next to a video"
+  },
+  "surfaceChannel": {
+    "message": "Channel pages"
+  },
+  "detectionHeading": {
+    "message": "Detection",
+    "description": "Section heading."
+  },
+  "deepCheckTitle": {
+    "message": "Check the spoken language"
+  },
+  "recommended": {
+    "message": "(recommended)"
+  },
+  "deepCheckHelp": {
+    "message": "Reads the spoken language that YouTube itself has recorded for each video (its auto-caption language and original audio track). This catches videos with translated or English titles. It loads each new video's page from YouTube once, and the result is remembered on this device. Turn this off to judge by titles only."
+  },
+  "blockDubbedTitle": {
+    "message": "Also hide videos with a dubbed track in a blocked language"
+  },
+  "blockDubbedHelp": {
+    "message": "For example, an English video that also offers Hindi dubbed audio."
+  },
+  "hideUntilCheckedTitle": {
+    "message": "Hide videos until they are checked"
+  },
+  "hideUntilCheckedHelp": {
+    "message": "Avoids briefly seeing a video before it is hidden. Videos may take a moment to appear."
+  },
+  "hiddenHeading": {
+    "message": "Hidden videos",
+    "description": "Section heading."
+  },
+  "actionHide": {
+    "message": "Remove them completely"
+  },
+  "actionDim": {
+    "message": "Fade them out with a label saying why"
+  },
+  "troubleshootingHeading": {
+    "message": "Troubleshooting",
+    "description": "Section heading."
+  },
+  "debugTitle": {
+    "message": "Show LangBlock's reasoning on every video"
+  },
+  "debugHelp": {
+    "message": "Adds a small label to each video saying what LangBlock found, and fades hidden videos instead of removing them. A video with no label wasn't recognised by LangBlock. Turn this off when you're done.",
+    "description": "Translations add: the labels are in English."
+  },
+  "storedHeading": {
+    "message": "Stored on this device",
+    "description": "Section heading."
+  },
+  "cacheCountLabel": {
+    "message": "Videos remembered so they aren't checked again:",
+    "description": "Followed by a number."
+  },
+  "clearCache": {
+    "message": "Forget remembered videos",
+    "description": "Button."
+  },
+  "cacheCleared": {
+    "message": "Done.",
+    "description": "Shown after the button above."
+  },
+  "footerFree": {
+    "message": "LangBlock is free. It collects no data and sends nothing anywhere except normal requests to YouTube."
+  },
+  "donate": {
+    "message": "♥ Support LangBlock",
+    "description": "Donation link."
+  },
+  "donateShort": {
+    "message": "♥ Support",
+    "description": "Donation link in the small popup."
+  },
+  "allSettings": {
+    "message": "All settings",
+    "description": "Link from the popup to the settings page."
+  },
+  "statusOff": {
+    "message": "LangBlock is off."
+  },
+  "statusPick": {
+    "message": "Pick a language below to start."
+  },
+  "statusInactive": {
+    "message": "Not filtering on this page (see All settings)."
+  },
+  "statusHidden": {
+    "message": "Hidden on this page: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusPending": {
+    "message": "Still being checked: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusOpenYoutube": {
+    "message": "Open YouTube and LangBlock filters it automatically."
+  },
+  "hiddenBy": {
+    "message": "Hidden by LangBlock: $WHY$",
+    "description": "Label on a faded video. WHY is e.g. 'Hindi (spoken)'.",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "whyTitle": {
+    "message": "title",
+    "description": "Reason: the video's title."
+  },
+  "whySpoken": {
+    "message": "spoken",
+    "description": "Reason: the language spoken in the video."
+  },
+  "whyDub": {
+    "message": "dubbed audio",
+    "description": "Reason: a dubbed audio track."
+  },
+  "whyDescription": {
+    "message": "description",
+    "description": "Reason: the video's description."
   }
 }

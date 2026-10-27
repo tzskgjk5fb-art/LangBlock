@@ -1,0 +1,225 @@
+{
+  "extDescription": {
+    "message": "Seçtiğiniz dillerde konuşulan YouTube videolarını aramada ve önerilerde gizler. Ücretsiz, gizli, veri toplamaz."
+  },
+  "actionTitle": {
+    "message": "LangBlock ayarları"
+  },
+  "optionsTitle": {
+    "message": "LangBlock ayarları"
+  },
+  "toggleTitle": {
+    "message": "LangBlock'u aç veya kapat"
+  },
+  "filteringOn": {
+    "message": "Filtre açık"
+  },
+  "lede": {
+    "message": "Seçtiğiniz dillerde konuşulan YouTube videolarını gizler. Her şey cihazınızda çalışır."
+  },
+  "blockedHeading": {
+    "message": "Engellenen diller"
+  },
+  "noLanguages": {
+    "message": "Henüz engellenen dil yok. Başlamak için aşağıdan bir dil seçin."
+  },
+  "blockAllExcept": {
+    "message": "$LANG$ hariç tümünü engelle",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "unblockAll": {
+    "message": "Tüm engelleri kaldır"
+  },
+  "undo": {
+    "message": "Geri al"
+  },
+  "blockedAllMsg": {
+    "message": "$LANG$ hariç tüm diller engelleniyor.",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "unblockedAllMsg": {
+    "message": "Tüm dillerin engeli kaldırıldı."
+  },
+  "blockingSummary": {
+    "message": "Engellenen diller: $COUNT$ / $TOTAL$.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      }
+    }
+  },
+  "blockingSummaryExcept": {
+    "message": "Engellenen diller: $COUNT$ / $TOTAL$. Engellenmeyenler: $LIST$.",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      },
+      "total": {
+        "content": "$2"
+      },
+      "list": {
+        "content": "$3"
+      }
+    }
+  },
+  "stopBlocking": {
+    "message": "Engeli kaldır: $LANG$",
+    "placeholders": {
+      "lang": {
+        "content": "$1"
+      }
+    }
+  },
+  "searchPlaceholder": {
+    "message": "Dil ara…"
+  },
+  "searchLabel": {
+    "message": "Dil ara"
+  },
+  "addLanguagePlaceholder": {
+    "message": "Dil ekle…"
+  },
+  "noMatch": {
+    "message": "Eşleşen dil yok."
+  },
+  "whereHeading": {
+    "message": "Nerede filtrelensin"
+  },
+  "surfaceSearch": {
+    "message": "Arama sonuçları"
+  },
+  "surfaceHome": {
+    "message": "Ana sayfa, abonelikler ve diğer akışlar"
+  },
+  "surfaceWatch": {
+    "message": "Videonun yanındaki öneriler"
+  },
+  "surfaceChannel": {
+    "message": "Kanal sayfaları"
+  },
+  "detectionHeading": {
+    "message": "Algılama"
+  },
+  "deepCheckTitle": {
+    "message": "Konuşulan dili kontrol et"
+  },
+  "recommended": {
+    "message": "(önerilir)"
+  },
+  "deepCheckHelp": {
+    "message": "YouTube'un her video için kendisinin kaydettiği konuşma dilini okur (otomatik altyazıların dili ve orijinal ses parçası). Böylece başlığı çevrilmiş ya da İngilizce olan videolar da yakalanır. Her yeni videonun sayfası YouTube'dan yalnızca bir kez yüklenir ve sonuç bu cihazda hatırlanır. Yalnızca başlıklara göre karar vermek için kapatın."
+  },
+  "blockDubbedTitle": {
+    "message": "Engellenen bir dilde dublajı olan videoları da gizle"
+  },
+  "blockDubbedHelp": {
+    "message": "Örneğin, Hintçe dublajı da bulunan İngilizce bir video."
+  },
+  "hideUntilCheckedTitle": {
+    "message": "Videoları kontrol edilene kadar gizle"
+  },
+  "hideUntilCheckedHelp": {
+    "message": "Bir videonun gizlenmeden önce kısa bir süre görünmesini önler. Videoların görünmesi biraz zaman alabilir."
+  },
+  "hiddenHeading": {
+    "message": "Gizlenen videolar"
+  },
+  "actionHide": {
+    "message": "Tamamen kaldır"
+  },
+  "actionDim": {
+    "message": "Nedenini belirten bir etiketle soluklaştır"
+  },
+  "troubleshootingHeading": {
+    "message": "Sorun giderme"
+  },
+  "debugTitle": {
+    "message": "LangBlock'un gerekçesini her videoda göster"
+  },
+  "debugHelp": {
+    "message": "Her videoya LangBlock'un ne bulduğunu belirten küçük bir etiket ekler ve gizlenen videoları kaldırmak yerine soluklaştırır. Etiketi olmayan bir video LangBlock tarafından tanınmamıştır. Etiketler İngilizcedir. İşiniz bitince kapatın."
+  },
+  "storedHeading": {
+    "message": "Bu cihazda saklananlar"
+  },
+  "cacheCountLabel": {
+    "message": "Tekrar kontrol edilmemesi için hatırlanan videolar:"
+  },
+  "clearCache": {
+    "message": "Hatırlanan videoları unut"
+  },
+  "cacheCleared": {
+    "message": "Tamam."
+  },
+  "footerFree": {
+    "message": "LangBlock ücretsizdir. Hiçbir veri toplamaz ve YouTube'a yapılan normal istekler dışında hiçbir yere bir şey göndermez."
+  },
+  "donate": {
+    "message": "♥ LangBlock'u destekle"
+  },
+  "donateShort": {
+    "message": "♥ Destekle"
+  },
+  "allSettings": {
+    "message": "Tüm ayarlar"
+  },
+  "statusOff": {
+    "message": "LangBlock kapalı."
+  },
+  "statusPick": {
+    "message": "Başlamak için aşağıdan bir dil seçin."
+  },
+  "statusInactive": {
+    "message": "Bu sayfada filtreleme yapılmıyor (Tüm ayarlar'a bakın)."
+  },
+  "statusHidden": {
+    "message": "Bu sayfada gizlenen: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusPending": {
+    "message": "Hâlâ kontrol ediliyor: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "statusOpenYoutube": {
+    "message": "YouTube'u açın, LangBlock otomatik olarak filtreler."
+  },
+  "hiddenBy": {
+    "message": "LangBlock tarafından gizlendi: $WHY$",
+    "placeholders": {
+      "why": {
+        "content": "$1"
+      }
+    }
+  },
+  "whyTitle": {
+    "message": "başlık"
+  },
+  "whySpoken": {
+    "message": "konuşma"
+  },
+  "whyDub": {
+    "message": "dublaj"
+  },
+  "whyDescription": {
+    "message": "açıklama"
+  }
+}

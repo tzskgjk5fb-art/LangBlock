@@ -11,30 +11,30 @@
       <header class="top">
         <img src="../icons/icon-48.png" alt="" width="28" height="28" />
         <h1>LangBlock</h1>
-        <label class="switch" title="Turn LangBlock on or off">
+        <label class="switch" title="Turn LangBlock on or off" data-i18n-title="toggleTitle">
           <input type="checkbox" id="enabled" />
           <span class="slider" aria-hidden="true"></span>
-          <span class="sr-only">Filtering on</span>
+          <span class="sr-only" data-i18n="filteringOn">Filtering on</span>
         </label>
       </header>
       <p id="status" class="status" role="status"></p>
 
       <section>
-        <h2>Blocked languages</h2>
+        <h2 data-i18n="blockedHeading">Blocked languages</h2>
         <div id="chips" class="chips" aria-live="polite"></div>
-        <p id="no-langs" class="hint" hidden>No languages blocked yet. Pick one below to start.</p>
+        <p id="no-langs" class="hint" hidden data-i18n="noLanguages">No languages blocked yet. Pick one below to start.</p>
         <div class="bulk">
           <button id="block-all" type="button" class="btn btn-small" hidden>Block all except my language</button>
-          <button id="unblock-all" type="button" class="btn btn-small">Unblock all</button>
+          <button id="unblock-all" type="button" class="btn btn-small" data-i18n="unblockAll">Unblock all</button>
         </div>
         <p id="bulk-msg" class="hint bulk-msg" role="status" hidden></p>
-        <input id="lang-search" type="search" placeholder="Add a language…" autocomplete="off" aria-label="Search languages" />
+        <input id="lang-search" type="search" placeholder="Add a language…" autocomplete="off" aria-label="Search languages" data-i18n-placeholder="addLanguagePlaceholder" data-i18n-aria-label="searchLabel" />
         <ul id="lang-list" class="lang-list"></ul>
       </section>
 
       <footer class="foot foot-row">
-        <button id="open-options" type="button" class="link">All settings</button>
-        <a id="donate" class="donate" href="#" target="_blank" rel="noopener noreferrer" hidden>♥ Support</a>
+        <button id="open-options" type="button" class="link" data-i18n="allSettings">All settings</button>
+        <a id="donate" class="donate" href="#" target="_blank" rel="noopener noreferrer" hidden data-i18n="donateShort">♥ Support</a>
       </footer>
     </main>
     <script src="../src/config.js"></script>
