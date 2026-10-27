@@ -250,16 +250,15 @@ test("sanitizeSettings rejects junk", () => {
   assert.equal(s.deepCheck, true);
 });
 
+// The Chrome Web Store rejects a package when any locale lacks the name.
 test("every translation has the same messages and placeholders as English", () => {
   const dir = path.join(root, "_locales");
   const read = (loc) => JSON.parse(readFileSync(path.join(dir, loc, "messages.json"), "utf8"));
   const en = read("en");
-  const brand = new Set(["extName", "extShortName"]);
   const holders = (m) => (m.message.match(/\$[A-Z]+\$/g) || []).map((p) => p.toLowerCase()).sort();
   for (const loc of readdirSync(dir)) {
     const msgs = read(loc);
     for (const key of Object.keys(en)) {
-      if (brand.has(key) && loc !== "en") continue;
       assert.ok(msgs[key], `${loc} is missing ${key}`);
       assert.deepEqual(holders(msgs[key]), holders(en[key]), `${loc}/${key} placeholders`);
       for (const p of holders(msgs[key])) {

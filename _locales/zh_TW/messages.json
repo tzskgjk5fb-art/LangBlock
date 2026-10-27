@@ -1,4 +1,10 @@
 {
+  "extName": {
+    "message": "LangBlock: YouTube Language Filter"
+  },
+  "extShortName": {
+    "message": "LangBlock"
+  },
   "extDescription": {
     "message": "在搜尋和推薦中隱藏用你所選語言講述的 YouTube 影片。免費、私密，不收集任何資料。"
   },

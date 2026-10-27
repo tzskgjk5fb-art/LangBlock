@@ -1,4 +1,10 @@
 {
+  "extName": {
+    "message": "LangBlock: YouTube Language Filter"
+  },
+  "extShortName": {
+    "message": "LangBlock"
+  },
   "extDescription": {
     "message": "Seçtiğiniz dillerde konuşulan YouTube videolarını aramada ve önerilerde gizler. Ücretsiz, gizli, veri toplamaz."
   },
