@@ -17,6 +17,8 @@ Chrome / Edge: Productivity (or "Fun" / "Social & Communication"). Firefox: Sear
 
 ## Description
 
+Ready-to-paste copies: [description-chrome.txt](store/description-chrome.txt) (plain text, for Chrome and Edge) and [description-firefox.txt](store/description-firefox.txt) (Markdown, for Firefox Add-ons, whose description field joins lines that aren't separated by a blank line).
+
 LangBlock hides YouTube videos in languages you don't want to see. Pick the languages to block (for example Hindi), and matching videos disappear from search results, the home page, your feeds, the "Up next" list and channel pages.
 
 HOW IT WORKS
