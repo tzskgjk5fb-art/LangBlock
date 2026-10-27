@@ -269,3 +269,31 @@ test("every translation has the same messages and placeholders as English", () =
     assert.ok(msgs.extDescription.message.length <= 132, `${loc} description too long for the stores`);
   }
 });
+
+test("a language's own name in its own script counts as a label", () => {
+  const gfx = "Color Correction in Adobe Premiere Pro - Advanced Class 01 - اردو / हिंदी";
+  assert.equal(LB.nameVerdict(gfx, set("ur")).lang, "ur");
+  assert.equal(LB.nameVerdict(gfx, set("hi")).lang, "hi", "both spellings of हिंदी/हिन्दी");
+  assert.equal(LB.nameVerdict("Vlog (हिन्दी)", set("hi")).lang, "hi");
+  assert.equal(LB.nameVerdict("【中文】 travel vlog", set("zh")).lang, "zh");
+  assert.equal(LB.nameVerdict("中文字幕 travel vlog", set("zh")), null, "part of a longer word");
+  assert.equal(LB.nameVerdict("Street food in Indonesia", set("id")), null, "Latin names for themselves are left out");
+});
+
+test("a language's English name counts anywhere next to its own script", () => {
+  const ml = "ഇതിലും എളുപ്പത്തിൽ Premiere Pro പഠിക്കാൻ പറ്റില്ല | Basics Malayalam Tutorial | beginners";
+  assert.equal(LB.nameVerdict(ml, set("ml")).lang, "ml");
+  assert.equal(LB.nameVerdict("Basics Malayalam Tutorial | beginners", set("ml")), null, "no Malayalam script");
+});
+
+test("a title mostly in a blocked script outweighs YouTube's English label", () => {
+  const ml = "ഇതിലും എളുപ്പത്തിൽ Premiere Pro പഠിക്കാൻ പറ്റില്ല | Basics Malayalam Tutorial | beginners";
+  const en = { o: null, a: [], s: ["en"] };
+  assert.ok(LB.scriptShare(ml, "ml") >= 0.4);
+  assert.equal(LB.titleOutweighsEnglish(ml, "ml", [en]), true);
+  assert.equal(LB.titleOutweighsEnglish(ml, "ml", [{ o: null, a: [], s: ["mr"] }]), false, "only English labels");
+  assert.equal(LB.titleOutweighsEnglish("BTS 'Dynamite' Official MV (방탄소년단)", "ko", [en]), false, "a few letters aren't enough");
+  const fromText = { lang: "ml", source: "script" };
+  assert.equal(LB.finalVerdict(fromText, "clear", null, true), fromText);
+  assert.equal(LB.finalVerdict(fromText, "clear", null, false), null);
+});

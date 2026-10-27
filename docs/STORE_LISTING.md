@@ -22,8 +22,8 @@ LangBlock hides YouTube videos in languages you don't want to see. Pick the lang
 HOW IT WORKS
 LangBlock checks each video on your device, using three signals:
 • Spoken language: LangBlock reads the spoken language YouTube itself has recorded for the video, namely the language of its automatic captions and its original audio track. This catches videos whose titles are in English or were auto-translated by YouTube. Each video is checked once and the answer is remembered on your device.
-• Language named in the title: titles such as "in Hindi", "(Hindi)", "Urdu / Hindi" or "Hindi dubbed" count, even when YouTube labels the video differently. "Learn Hindi" or "Hindi vs Urdu" don't.
-• Title check: your browser's built-in language detector and a writing-system check read the title, so obvious matches (for example a title written in Devanagari) are hidden instantly. When YouTube knows the spoken language, that wins, so a French title on a video spoken in English stays visible.
+• Language named in the title: titles such as "in Hindi", "(Hindi)", "Urdu / Hindi", "Hindi dubbed" or the language's own name in its own script ("اردو / हिंदी") count, even when YouTube labels the video differently. "Learn Hindi" or "Hindi vs Urdu" on their own don't.
+• Title check: your browser's built-in language detector and a writing-system check read the title, so obvious matches (for example a title written in Devanagari) are hidden instantly. When YouTube knows the spoken language, that wins, so a French title on a video spoken in English stays visible. The exception is YouTube's default "English" label, which many videos in other languages carry: a title written largely in a blocked language's own script outweighs it.
 
 FEATURES
 • Block any number of languages (80+ supported)

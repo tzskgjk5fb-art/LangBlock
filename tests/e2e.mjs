@@ -18,6 +18,8 @@ const VIDEOS = {
   hiTitle0001: { title: "आज का मौसम कैसा रहेगा", pr: { captions: [["hi", "asr"]] } },
   hiTitleEnSp: { title: "फ़िल्म समीक्षा: नई फ़िल्म कैसी है", pr: { captions: [["en", "asr"]] } },
   hiTitleNone: { title: "मेरा नया गाना सुनिए दोस्तों", pr: {} },
+  hiTitleMrSp: { title: "आज का मौसम कैसा रहेगा", pr: { captions: [["mr", "asr"]] } },
+  enTitleHiBt: { title: "My trip to Delhi vlog part 2 | दिल्ली", pr: { captions: [["en", "asr"]] } },
   hiAsr000001: { title: "iPhone 17 review after 30 days", pr: { captions: [["hi", "asr"], ["en", ""]] } },
   enAsr000001: { title: "How to cook pasta like an Italian", pr: { captions: [["en", "asr"]] } },
   hiOrig00001: { title: "Funny cat compilation 2026", pr: { audio: [["en.3", "English"], ["hi.4", "Hindi original"]] } },
@@ -97,7 +99,7 @@ function card(id, tag = "ytd-video-renderer") {
 }
 
 function searchPage() {
-  const ids = ["hiTitle0001", "hiTitleEnSp", "hiTitleNone", "hiAsr000001", "enAsr000001", "hiOrig00001", "enOrigDub01", "hiDesc00001"];
+  const ids = ["hiTitle0001", "hiTitleEnSp", "hiTitleNone", "hiTitleMrSp", "enTitleHiBt", "hiAsr000001", "enAsr000001", "hiOrig00001", "enOrigDub01", "hiDesc00001"];
   return `<!doctype html><html><body><ytd-app><div id="contents">
 ${ids.map((id) => card(id)).join("\n")}
 <div class="future-layout" id="card-genericHi01">
@@ -192,7 +194,9 @@ try {
   assert.equal(state.plUrduHindi, "blocked", "playlist whose videos say 'Urdu / Hindi'");
   assert.equal(state.plEnglish, "shown", "playlist of English videos");
   assert.equal(state.plTextOnly, "blocked", "playlist card without video links, judged by its text");
-  assert.equal(state.hiTitleEnSp, "shown", "Hindi title but spoken English: spoken language wins");
+  assert.equal(state.hiTitleEnSp, "blocked", "title in Hindi script outweighs YouTube's English label");
+  assert.equal(state.hiTitleMrSp, "shown", "Hindi-looking title but YouTube says Marathi: the spoken language wins");
+  assert.equal(state.enTitleHiBt, "shown", "a few Hindi letters in an English title don't outweigh English captions");
   assert.equal(state.hiTitleNone, "blocked", "Hindi title, no spoken-language info: title decides");
   assert.equal(await yt.isVisible("#card-hiAsr000001"), false, "blocked card is not displayed");
 

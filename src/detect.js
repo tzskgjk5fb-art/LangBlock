@@ -293,23 +293,7 @@
   function spokenVerdict(sig, blocked, opts = {}) {
     if (!sig || !blocked || blocked.size === 0) return null;
     const audio = sig.a || [];
-    const asr = sig.s || [];
-    let spoken = null;
-    let source = null;
-    // The "original" track among several is the most reliable. Next comes
-    // YouTube's speech recognition. A lone audio track's language is only
-    // what the creator picked, which is sometimes wrong (Urdu videos
-    // labelled English), so it comes last.
-    if (sig.o) {
-      spoken = sig.o;
-      source = "audio";
-    } else if (asr.length > 0) {
-      spoken = asr[0];
-      source = "captions";
-    } else if (audio.length === 1) {
-      spoken = audio[0];
-      source = "audio";
-    }
+    const { lang: spoken, source } = spokenLanguage(sig);
     if (spoken) {
       if (blocked.has(spoken)) return { lang: spoken, source };
       if (opts.blockDubbed) {
@@ -326,6 +310,39 @@
     return null;
   }
 
+  /**
+   * The spoken language YouTube gives for a video, and where it came from.
+   * The "original" track among several is the most reliable. Next comes
+   * YouTube's speech recognition. A lone audio track's language is only what
+   * the creator picked, which is sometimes wrong (Urdu videos labelled
+   * English), so it comes last.
+   * @returns {{lang:string|null, source:string|null}}
+   */
+  function spokenLanguage(sig) {
+    const audio = (sig && sig.a) || [];
+    const asr = (sig && sig.s) || [];
+    if (sig && sig.o) return { lang: sig.o, source: "audio" };
+    if (asr.length > 0) return { lang: asr[0], source: "captions" };
+    if (audio.length === 1) return { lang: audio[0], source: "audio" };
+    return { lang: null, source: null };
+  }
+
+  /**
+   * Share of the text's letters written in `code`'s own writing system, for
+   * languages that don't use the Latin alphabet (0 for those that do).
+   */
+  function scriptShare(text, code) {
+    const lang = LB.LANGUAGE_BY_CODE[normalizeCode(code)];
+    if (!lang || lang.script === "Latin") return 0;
+    const { total, counts } = analyzeScripts(text);
+    if (!total) return 0;
+    let n = counts[lang.script] || 0;
+    // Japanese mixes kana with kanji; kanji next to kana isn't Chinese.
+    if (lang.code === "ja" && n > 0) n += counts.Han || 0;
+    if (lang.code === "zh" && counts.Japanese) n = 0;
+    return n / total;
+  }
+
   // ---------------------------------------------------------------------
   // Language named in the title ("in Hindi", "Class 1 - Urdu / Hindi")
   // ---------------------------------------------------------------------
@@ -334,7 +351,21 @@
     return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   }
 
-  const nameMatchers = new Map(); // code -> RegExp
+  // A language's name for itself, when that isn't in the Latin alphabet:
+  // "हिन्दी", "اردو", "മലയാളം". Latin ones ("Indonesia", "Deutsch") are
+  // ordinary words in English titles, so they are left out.
+  function nativeNames(lang) {
+    const names = new Set(lang.native || []);
+    try {
+      const own = new Intl.DisplayNames([lang.code], { type: "language" }).of(lang.code);
+      if (own && own !== lang.code) names.add(own);
+    } catch {
+      // no Intl data for this language
+    }
+    return [...names].filter((n) => !/\p{Script=Latin}/u.test(n));
+  }
+
+  const nameMatchers = new Map(); // code -> { label, native, anywhere } RegExps
   function nameMatcher(code) {
     if (nameMatchers.has(code)) return nameMatchers.get(code);
     const lang = LB.LANGUAGE_BY_CODE[code];
@@ -356,6 +387,17 @@
         ].join("|"),
         "iu"
       );
+      // Written in its own script the name is a clear label wherever it
+      // stands, as long as it's a whole word ("اردو / हिंदी", "【中文】",
+      // but not "中文字幕").
+      const own = nativeNames(lang).map(escapeRegExp);
+      const native = own.length
+        ? new RegExp(`(?<![\\p{L}\\p{M}])(?:${own.join("|")})(?![\\p{L}\\p{M}])`, "iu")
+        : null;
+      // "Basics Malayalam Tutorial" next to Malayalam script: the name counts
+      // anywhere when the text is also written in that language's script.
+      const anywhere = lang.script !== "Latin" ? new RegExp(`\\b${name}\\b`, "iu") : null;
+      re = { label: re, native, anywhere, script: lang.script };
     }
     nameMatchers.set(code, re);
     return re;
@@ -367,9 +409,15 @@
    */
   function nameVerdict(text, blocked) {
     if (!text || !blocked) return null;
+    let scripts = null;
     for (const code of blocked) {
-      const re = nameMatcher(code);
-      if (re && re.test(text)) return { lang: code, source: "name" };
+      const m = nameMatcher(code);
+      if (!m) continue;
+      if (m.label.test(text) || (m.native && m.native.test(text))) return { lang: code, source: "name" };
+      if (m.anywhere && m.anywhere.test(text)) {
+        scripts ||= analyzeScripts(text).counts;
+        if ((scripts[m.script] || 0) >= SCRIPT_MIN_LETTERS) return { lang: code, source: "name" };
+      }
     }
     return null;
   }
@@ -381,14 +429,32 @@
    *    YouTube labels the speech as another language.
    * 3. YouTube knows the spoken language and it isn't blocked: show. A
    *    French-looking title on a video spoken in English is not French.
+   *    Except that English is YouTube's default label, and many videos
+   *    spoken in other languages carry it. A title written largely in a
+   *    blocked language's own script (`titleOutweighsEnglish`) wins over it.
    * 4. Otherwise the title's detected language decides.
    * @returns {{lang:string, source:string}|null} null = show the video
    */
-  function finalVerdict(fromText, spoken, fromName) {
+  function finalVerdict(fromText, spoken, fromName, titleOutweighsEnglish = false) {
     if (spoken && spoken !== "clear") return spoken;
     if (fromName) return fromName;
-    if (spoken === "clear") return null;
+    if (spoken === "clear" && !(titleOutweighsEnglish && fromText)) return null;
     return fromText || null;
+  }
+
+  // How much of a title has to be in a blocked language's script to outweigh
+  // YouTube's "English" label: "ഇതിലും എളുപ്പത്തിൽ Premiere Pro പഠിക്കാൻ
+  // പറ്റില്ല | Basics Malayalam Tutorial" is about 43%.
+  const TITLE_OUTWEIGHS_ENGLISH_SHARE = 0.4;
+
+  /**
+   * Whether a title in `lang`'s script should win over YouTube saying every
+   * video on the card is spoken in English.
+   */
+  function titleOutweighsEnglish(title, lang, sigs) {
+    if (!lang || !sigs.length) return false;
+    if (!sigs.every((sig) => sig && spokenLanguage(sig).lang === "en")) return false;
+    return scriptShare(title, lang) >= TITLE_OUTWEIGHS_ENGLISH_SHARE;
   }
 
   /**
@@ -498,8 +564,11 @@
     signalsFromPlayerResponse,
     descriptionFromPlayerResponse,
     spokenVerdict,
+    spokenLanguage,
+    scriptShare,
     nameVerdict,
     finalVerdict,
+    titleOutweighsEnglish,
     playlistVerdict,
     confidentLanguage,
     DEFAULT_SETTINGS,

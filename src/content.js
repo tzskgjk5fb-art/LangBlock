@@ -208,29 +208,33 @@
     return found;
   }
 
+  // The card's title(s), and the title with channel name and snippet.
   function cardText(card, isPlaylist) {
-    const parts = [];
+    const titles = [];
     const title = card.querySelector(TITLE_SELECTOR);
-    if (title) parts.push(title.getAttribute("title") || title.textContent);
+    if (title) titles.push(title.getAttribute("title") || title.textContent);
     else {
       const a = card.querySelector(LINK_SELECTOR + "[title]");
-      if (a) parts.push(a.getAttribute("title"));
+      if (a) titles.push(a.getAttribute("title"));
     }
-    const channel = card.querySelector(CHANNEL_SELECTOR);
-    if (channel) parts.push(channel.textContent);
-    const snippet = card.querySelector(SNIPPET_SELECTOR);
-    if (snippet) parts.push(snippet.textContent);
     // Playlist cards list their first videos; their titles often say more
     // than the playlist title ("Class 1 - Urdu / Hindi").
     if (isPlaylist) {
-      for (const a of card.querySelectorAll(LINK_SELECTOR)) parts.push(a.getAttribute("title") || a.textContent);
+      for (const a of card.querySelectorAll(LINK_SELECTOR)) titles.push(a.getAttribute("title") || a.textContent);
     }
-    return parts
-      .filter(Boolean)
-      .join(" \n ")
-      .replace(/\s+/g, " ")
-      .trim()
-      .slice(0, 1000);
+    const channel = card.querySelector(CHANNEL_SELECTOR);
+    const snippet = card.querySelector(SNIPPET_SELECTOR);
+    const join = (parts) =>
+      parts
+        .filter(Boolean)
+        .join(" \n ")
+        .replace(/\s+/g, " ")
+        .trim()
+        .slice(0, 1000);
+    return {
+      title: join(titles),
+      text: join([titles[0], channel && channel.textContent, snippet && snippet.textContent, ...titles.slice(1)]),
+    };
   }
 
   // -------------------------------------------------------------------
@@ -292,6 +296,7 @@
     if (info.spoken) parts.push(`spoken: ${info.spoken}`);
     if (info.title) parts.push(`title: ${info.title}`);
     if (info.name) parts.push(`names ${LB.languageName(info.name.lang)}`);
+    if (info.note) parts.push(info.note);
     card.setAttribute("data-langblock-debug", parts.join(" · "));
   }
 
@@ -314,7 +319,7 @@
     }
 
     const isPlaylist = ids.length !== 1;
-    const text = cardText(card, isPlaylist);
+    const { text, title } = cardText(card, isPlaylist);
     const detection = await detect(text);
     if (tokens.get(card) !== token) return;
 
@@ -350,7 +355,9 @@
       .join("; ");
 
     if (unknown.length === 0) {
-      const v = LB.finalVerdict(fromText, spoken, fromName);
+      const outweighs = !!fromText && LB.titleOutweighsEnglish(title, fromText.lang, sigs);
+      const v = LB.finalVerdict(fromText, spoken, fromName, outweighs);
+      if (outweighs && v === fromText) info.note = "title outweighs YouTube's English label";
       decide(v ? "blocked" : null, v);
       return;
     }
