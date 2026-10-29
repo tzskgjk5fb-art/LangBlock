@@ -391,3 +391,15 @@ test("spokenVerdict: an unconfirmed caption language is ignored", () => {
   assert.deepEqual({ ...LB.spokenVerdict(sig({ x: 0 }), set("th")) }, { lang: "th", source: "captions" });
   assert.deepEqual({ ...LB.spokenVerdict(sig({ d: "th" }), set("th")) }, { lang: "th", source: "description" });
 });
+
+test("store listing page shows the same descriptions as the paste-ready files", () => {
+  const listing = readFileSync(path.join(root, "docs/STORE_LISTING.md"), "utf8");
+  for (const [name, lang] of [["chrome", "text"], ["firefox", "markdown"]]) {
+    const file = readFileSync(path.join(root, `docs/store/description-${name}.txt`), "utf8");
+    const block = listing.match(new RegExp(`<!-- description:${name} -->\\n\`\`\`${lang}\\n([\\s\\S]*?)\`\`\`\\n<!-- /description:${name} -->`));
+    assert.ok(block, `${name} block present`);
+    assert.equal(block[1], file, `${name} block matches; run npm run store-text`);
+  }
+  const summary = listing.match(/## Summary[^\n]*\n```text\n([^\n]*)\n```/)[1];
+  assert.ok(summary.length <= 132, "summary fits");
+});
