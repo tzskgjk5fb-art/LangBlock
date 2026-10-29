@@ -43,6 +43,24 @@ const VIDEOS = {
       desc: "Hey everyone! Drop your doubts in the comments.\n#premierepro #hindi",
     },
   },
+  // 11 seconds of bass playing, no speech; YouTube's speech recognition
+  // still names a language
+  musicHi0001: {
+    title: "D'Addario Pro Steels - Slap",
+    pr: {
+      captions: [["hi", "asr"]],
+      seconds: 11,
+      category: "Music",
+      desc: "Full Video ▻ https://youtu.be/ajq8maUjvhs D'Addario EXL165 on Thomann",
+    },
+  },
+  // A song whose description backs up the caption language
+  songHi00001: {
+    title: "Kesariya - Brahmastra | Ranbir Kapoor | Arijit Singh",
+    pr: { captions: [["hi", "asr"]], seconds: 268, category: "Music", desc: "Song: केसरिया\nSinger: Arijit Singh\nMusic: Pritam" },
+  },
+  // Hidden by an older version because of its caption language
+  oldMusicHi1: { title: "Slap bass groove", pr: { captions: [["hi", "asr"]], seconds: 14, category: "Music" } },
   enAsrTagSpm: {
     title: "Video editing basics",
     pr: { captions: [["en", "asr"]], keywords: ["editing in hindi", "editing in tamil", "editing in telugu"] },
@@ -72,10 +90,17 @@ function playlistCard(name, title, first, second) {
   </yt-lockup-view-model>`;
 }
 
-function playerResponse({ captions = [], audio = [], desc = "", keywords }) {
+function playerResponse({ title = "", captions = [], audio = [], desc = "", keywords, seconds, category }) {
   return {
     playabilityStatus: { status: "OK" },
-    videoDetails: { shortDescription: desc, ...(keywords ? { keywords } : {}) },
+    videoDetails: {
+      title,
+      author: "Some Channel",
+      shortDescription: desc,
+      ...(keywords ? { keywords } : {}),
+      ...(seconds ? { lengthSeconds: String(seconds) } : {}),
+    },
+    ...(category ? { microformat: { playerMicroformatRenderer: { category } } } : {}),
     streamingData: {
       adaptiveFormats: [
         { itag: 137, mimeType: "video/mp4" },
@@ -99,7 +124,7 @@ function playerResponse({ captions = [], audio = [], desc = "", keywords }) {
 const watchCalls = [];
 function watchPage(id) {
   const v = VIDEOS[id];
-  const pr = JSON.stringify(playerResponse(v ? v.pr : {}));
+  const pr = JSON.stringify(playerResponse(v ? { title: v.title, ...v.pr } : {}));
   // Big filler after the player data, to exercise the streaming early exit.
   return `<!doctype html><html><head><script>var ytcfg = {"a":"}"};</script></head><body>
 <script>var ytInitialPlayerResponse = ${pr};var meta = document.querySelector('meta');</script>
@@ -116,7 +141,7 @@ function card(id, tag = "ytd-video-renderer") {
 }
 
 function searchPage() {
-  const ids = ["hiTitle0001", "hiTitleEnSp", "hiTitleNone", "hiTitleMrSp", "enTitleHiBt", "hiAsr000001", "enAsr000001", "hiOrig00001", "enOrigDub01", "hiDesc00001", "enAsrTagHi1", "enAsrTagSpm"];
+  const ids = ["hiTitle0001", "hiTitleEnSp", "hiTitleNone", "hiTitleMrSp", "enTitleHiBt", "hiAsr000001", "enAsr000001", "hiOrig00001", "enOrigDub01", "hiDesc00001", "enAsrTagHi1", "enAsrTagSpm", "musicHi0001", "songHi00001"];
   return `<!doctype html><html><body><ytd-app><div id="contents">
 ${ids.map((id) => card(id)).join("\n")}
 <div class="future-layout" id="card-genericHi01">
@@ -234,6 +259,8 @@ try {
   assert.equal(state.hiTitleNone, "blocked", "Hindi title, no spoken-language info: title decides");
   assert.equal(state.enAsrTagHi1, "blocked", "labelled English, but the tags say Hindi");
   assert.equal(state.enAsrTagSpm, "shown", "tags naming many languages are ignored");
+  assert.equal(state.musicHi0001, "shown", "speechless music clip: YouTube's caption language alone doesn't count");
+  assert.equal(state.songHi00001, "blocked", "song whose description backs up the caption language");
   assert.equal(await yt.isVisible("#card-hiAsr000001"), false, "blocked card is not displayed");
 
   // A card added later (infinite scroll)
@@ -281,6 +308,20 @@ try {
   );
   assert.equal(watchCalls.filter((v) => v === "oldCacheHi1").length, 1, "old entry checked again once");
 
+  // A video an older version hid because of its caption language is checked
+  // again, and a speechless music clip comes back
+  await options.evaluate(() =>
+    chrome.storage.local.set({ "v:oldMusicHi1": { o: null, a: [], s: ["hi"], d: null, n: [], t: Date.now() } })
+  );
+  await yt.evaluate((html) => document.getElementById("contents").insertAdjacentHTML("beforeend", html), card("oldMusicHi1"));
+  await yt.waitForFunction(() => document.getElementById("card-oldMusicHi1")?.hasAttribute("data-lb-done"));
+  await yt.waitForFunction(
+    () => !document.getElementById("card-oldMusicHi1").hasAttribute("data-langblock"),
+    null,
+    { timeout: 15000 }
+  );
+  assert.equal(watchCalls.filter((v) => v === "oldMusicHi1").length, 1, "hidden by an old check, checked again once");
+
   // YouTube reuses card elements: swap a shown card's link to a Hindi video
   await yt.evaluate(() => {
     for (const a of document.querySelectorAll("#card-recycledEn1 a")) a.setAttribute("href", "/watch?v=recycledHi1");
@@ -326,6 +367,9 @@ try {
   const tagLabel = await yt.getAttribute("#card-enAsrTagHi1", "data-langblock-debug");
   console.log("debug label (tags):", tagLabel);
   assert.match(tagLabel, /^LangBlock: Hidden: Hindi \(tags\) · spoken: English \(auto-captions\), tags name Hindi/);
+  const musicLabel = await yt.getAttribute("#card-musicHi0001", "data-langblock-debug");
+  console.log("debug label (music):", musicLabel);
+  assert.match(musicLabel, /^LangBlock: Shown · spoken: unknown, Hindi auto-captions not trusted \(music or a short clip, and nothing else says Hindi\)/);
   // A check that keeps failing says why
   await yt.evaluate((html) => {
     document.getElementById("contents").insertAdjacentHTML("beforeend", html);

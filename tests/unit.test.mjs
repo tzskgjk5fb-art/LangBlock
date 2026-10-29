@@ -360,3 +360,34 @@ test("a title mostly in a blocked script outweighs YouTube's English label", () 
   assert.equal(LB.finalVerdict(fromText, "clear", null, true), fromText);
   assert.equal(LB.finalVerdict(fromText, "clear", null, false), null);
 });
+
+test("music and very short clips need more than YouTube's caption language", () => {
+  const pr = (videoDetails, category) => ({ videoDetails, microformat: { playerMicroformatRenderer: { category } } });
+  assert.equal(LB.captionsNeedSupport(pr({ lengthSeconds: "11" }, "Entertainment")), true, "11-second clip");
+  assert.equal(LB.captionsNeedSupport(pr({ lengthSeconds: "240" }, "Music")), true, "music video");
+  assert.equal(LB.captionsNeedSupport(pr({ lengthSeconds: "240", musicVideoType: "MUSIC_VIDEO_TYPE_OMV" })), true);
+  assert.equal(LB.captionsNeedSupport(pr({ lengthSeconds: "600" }, "Education")), false, "a talk");
+  assert.equal(LB.captionsNeedSupport(pr({ lengthSeconds: "0" }, "Gaming")), false, "live stream");
+  assert.equal(LB.captionsNeedSupport({}), false);
+});
+
+test("languageSupported: what backs up a caption language", () => {
+  const bass = "D'Addario Pro Steels - Slap · Gregor Fris · Full Video ▻ https://youtu.be/ajq8maUjvhs D'Addario EXL165 on Thomann";
+  assert.equal(LB.languageSupported("th", bass, [det(false, ["es", 40])]), false, "nothing says Thai");
+  assert.equal(LB.languageSupported("th", bass + " · เบส สแลป"), true, "Thai letters");
+  assert.equal(LB.languageSupported("hi", "Kesariya | Arijit Singh · Song: केसरिया"), true, "Devanagari letters");
+  assert.equal(LB.languageSupported("hi", "Kesariya | Arijit Singh · latest hindi songs"), true, "named in the tags");
+  assert.equal(LB.languageSupported("hi", "Tum Hi Ho · Lyrics: hum tere bin ab reh nahi sakte"), true, "romanized Hindi words");
+  assert.equal(LB.languageSupported("es", "Clase de bajo para principiantes"), true, "Spanish words");
+  assert.equal(LB.languageSupported("es", "Slap bass", [det(false, ["es", 35])]), true, "detector puts it first");
+  assert.equal(LB.languageSupported("hi", "Slap bass", [], ["hi"]), true, "audio track label");
+  assert.equal(LB.languageSupported("hi", "Slap bass groove"), false);
+});
+
+test("spokenVerdict: an unconfirmed caption language is ignored", () => {
+  const sig = (more) => ({ o: null, a: [], s: ["th"], d: null, n: [], x: 1, ...more });
+  assert.equal(LB.spokenVerdict(sig(), set("th")), null, "no usable spoken language: the title decides");
+  assert.deepEqual({ ...LB.spokenLanguage(sig({ a: ["en"] })) }, { lang: "en", source: "audio" }, "a lone audio track still counts");
+  assert.deepEqual({ ...LB.spokenVerdict(sig({ x: 0 }), set("th")) }, { lang: "th", source: "captions" });
+  assert.deepEqual({ ...LB.spokenVerdict(sig({ d: "th" }), set("th")) }, { lang: "th", source: "description" });
+});

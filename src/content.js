@@ -91,6 +91,9 @@
   // left alone until the next YouTube page.
   const RETRY_DELAYS_MS = [2000, 8000, 30000, 90000];
   const MAX_HTML_BYTES = 4 * 1024 * 1024;
+  // Cache entries from before 1.0.10 trusted the caption language even for
+  // music and very short clips. Videos they hid that way are checked again.
+  const CACHE_VERSION = 2;
 
   // -------------------------------------------------------------------
   // State
@@ -286,18 +289,23 @@
   // Troubleshooting label: what LangBlock found for this card.
   function describeSignals(sig) {
     if (!sig) return "not checked";
-    let tags = "";
-    if (sig.n && sig.n.length) {
-      tags = sig.n.length > LB.MAX_TAGGED_LANGUAGES
-        ? `, tags name ${sig.n.length} languages (ignored)`
-        : `, tags name ${sig.n.map(LB.languageName).join(" and ")}`;
+    const name = LB.languageName;
+    let main = "no language info from YouTube";
+    if (sig.o) main = `${name(sig.o)} (original audio track)`;
+    else if (sig.s.length && !sig.x) main = `${name(sig.s[0])} (auto-captions)`;
+    else if (sig.a.length === 1) main = `${name(sig.a[0])} (audio track label)`;
+    else if (sig.d) main = `${name(sig.d)} (description)`;
+    else if (sig.u) main = "YouTube held back the details, will look again later";
+    else if (sig.s.length) main = "unknown";
+    if (sig.s.length && sig.x) {
+      main += `, ${name(sig.s[0])} auto-captions not trusted (music or a short clip, and nothing else says ${name(sig.s[0])})`;
     }
-    if (sig.o) return `${LB.languageName(sig.o)} (original audio track)${tags}`;
-    if (sig.s.length) return `${LB.languageName(sig.s[0])} (auto-captions)${tags}`;
-    if (sig.a.length === 1) return `${LB.languageName(sig.a[0])} (audio track label)${tags}`;
-    if (sig.d) return `${LB.languageName(sig.d)} (description)${tags}`;
-    if (sig.u) return `YouTube held back the details, will look again later${tags}`;
-    return `no language info from YouTube${tags}`;
+    if (sig.n && sig.n.length) {
+      main += sig.n.length > LB.MAX_TAGGED_LANGUAGES
+        ? `, tags name ${sig.n.length} languages (ignored)`
+        : `, tags name ${sig.n.map(name).join(" and ")}`;
+    }
+    return main;
   }
 
   function describeWaiting(id) {
@@ -388,9 +396,14 @@
       const v = LB.finalVerdict(fromText, spoken, fromName, outweighs);
       if (outweighs && v === fromText) info.note = "title outweighs YouTube's English label";
       decide(v ? "blocked" : null, v);
-      // Remembered by a version that didn't read tags yet: look once more
-      // when the card comes near the screen.
-      if (!v && sigs.some((sig) => sig && sig.n === null)) visibility.observe(card);
+      if (v && v.source === "captions") {
+        // Hidden by the caption language on an older check: look once more.
+        ids.forEach((id, i) => sigs[i] && sigs[i].v < CACHE_VERSION && refresh(id));
+      } else if (!v && sigs.some((sig) => sig && sig.n === null)) {
+        // Remembered by a version that didn't read tags yet: look once more
+        // when the card comes near the screen.
+        visibility.observe(card);
+      }
       return;
     }
     // Still waiting for some videos. Hide straight away if what we know so
@@ -475,6 +488,8 @@
       d: typeof entry.d === "string" ? entry.d : null,
       n: Array.isArray(entry.n) ? codes(entry.n) : null, // null: checked before tags were read
       u: entry.u ? 1 : 0,
+      x: entry.x ? 1 : 0,
+      v: typeof entry.v === "number" ? entry.v : 1,
       t: entry.t,
     };
     signals.set(id, clean);
@@ -664,20 +679,32 @@
     if (result.status !== "found") return { why: result.why };
     const pr = result.data;
     const sig = LB.signalsFromPlayerResponse(pr);
-    // When YouTube has no audio or caption language, fall back to the
+    const description = LB.descriptionFromPlayerResponse(pr);
+    const tagText = LB.tagTextFromPlayerResponse(pr);
+    // On music and very short clips, speech recognition only counts when the
+    // title, channel name, description or tags point to the same language.
+    let x = 0;
+    if (sig.s.length && !sig.o && LB.captionsNeedSupport(pr)) {
+      const vd = pr.videoDetails || {};
+      const title = typeof vd.title === "string" ? vd.title : "";
+      const author = typeof vd.author === "string" ? vd.author : "";
+      const text = [title, author, description, tagText].filter(Boolean).join(" · ");
+      const detections = [await detect(title), await detect(description)];
+      if (!LB.languageSupported(sig.s[0], text, detections, sig.a)) x = 1;
+    }
+    // When YouTube has no usable audio or caption language, fall back to the
     // language of the full description.
     let d = null;
-    if (!sig.o && sig.a.length === 0 && sig.s.length === 0) {
-      const description = LB.descriptionFromPlayerResponse(pr);
+    if (!sig.o && sig.a.length === 0 && (sig.s.length === 0 || x)) {
       d = LB.confidentLanguage(description, await detect(description));
     }
     // Only language codes are kept, never the tags themselves.
-    const n = LB.namedLanguages(LB.tagTextFromPlayerResponse(pr));
+    const n = LB.namedLanguages(tagText);
     // "Sign in to confirm you're not a bot" and similar pages leave the
     // language fields out. Look again in an hour rather than in three days.
     const status = pr && pr.playabilityStatus && pr.playabilityStatus.status;
     const u = status && status !== "OK" ? 1 : 0;
-    return { sig: { o: sig.o, a: sig.a, s: sig.s, d, n, u, t: Date.now() } };
+    return { sig: { o: sig.o, a: sig.a, s: sig.s, d, n, u, x, v: CACHE_VERSION, t: Date.now() } };
   }
 
   // -------------------------------------------------------------------

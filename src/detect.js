@@ -329,9 +329,10 @@
 
   /**
    * Decide from cached signals whether a video is in a blocked language.
-   * @param {{o?:string|null, a?:string[], s?:string[], d?:string|null, n?:string[]}} sig
+   * @param {{o?:string|null, a?:string[], s?:string[], d?:string|null, n?:string[], x?:number}} sig
    *   d = language the browser detected in the description, if any
    *   n = languages the tags and hashtags name
+   *   x = 1 when the caption language (s) went unconfirmed, so it's ignored
    * @returns {{lang:string, source:string}|"clear"|null}
    *   "clear" = we know the spoken language and it isn't blocked
    *   null    = no usable signal
@@ -361,16 +362,17 @@
   /**
    * The spoken language YouTube gives for a video, and where it came from.
    * The "original" track among several is the most reliable. Next comes
-   * YouTube's speech recognition. A lone audio track's language is only what
-   * the creator picked, which is sometimes wrong (Urdu videos labelled
-   * English), so it comes last.
+   * YouTube's speech recognition, unless it was marked unconfirmed (`x`, see
+   * captionsNeedSupport). A lone audio track's language is only what the
+   * creator picked, which is sometimes wrong (Urdu videos labelled English),
+   * so it comes last.
    * @returns {{lang:string|null, source:string|null}}
    */
   function spokenLanguage(sig) {
     const audio = (sig && sig.a) || [];
     const asr = (sig && sig.s) || [];
     if (sig && sig.o) return { lang: sig.o, source: "audio" };
-    if (asr.length > 0) return { lang: asr[0], source: "captions" };
+    if (asr.length > 0 && !sig.x) return { lang: asr[0], source: "captions" };
     if (audio.length === 1) return { lang: audio[0], source: "audio" };
     return { lang: null, source: null };
   }
@@ -380,15 +382,68 @@
    * languages that don't use the Latin alphabet (0 for those that do).
    */
   function scriptShare(text, code) {
+    const { n, total } = scriptLetters(text, code);
+    return total ? n / total : 0;
+  }
+
+  // Letters of the text in `code`'s own writing system (0 for the Latin
+  // alphabet), and all letters.
+  function scriptLetters(text, code) {
     const lang = LB.LANGUAGE_BY_CODE[normalizeCode(code)];
-    if (!lang || lang.script === "Latin") return 0;
+    if (!lang || lang.script === "Latin") return { n: 0, total: 0 };
     const { total, counts } = analyzeScripts(text);
-    if (!total) return 0;
     let n = counts[lang.script] || 0;
     // Japanese mixes kana with kanji; kanji next to kana isn't Chinese.
     if (lang.code === "ja" && n > 0) n += counts.Han || 0;
     if (lang.code === "zh" && counts.Japanese) n = 0;
-    return n / total;
+    return { n, total };
+  }
+
+  // ---------------------------------------------------------------------
+  // How far to trust YouTube's speech recognition
+  // ---------------------------------------------------------------------
+
+  // YouTube's speech recognition names a language even for music and very
+  // short clips with little or no speech, and then the guess can be anything:
+  // an 11-second bass clip without a word spoken came back as Thai. For those
+  // videos the caption language only counts when something else about the
+  // video points to the same language.
+  const SHORT_CLIP_SECONDS = 30;
+
+  /** Whether a video's caption language needs backing up (music, or short). */
+  function captionsNeedSupport(pr) {
+    const vd = (pr && pr.videoDetails) || {};
+    const mf = (pr && pr.microformat && pr.microformat.playerMicroformatRenderer) || {};
+    const seconds = Number(vd.lengthSeconds || mf.lengthSeconds) || 0;
+    const music = mf.category === "Music" || !!vd.musicVideoType;
+    return music || (seconds > 0 && seconds < SHORT_CLIP_SECONDS);
+  }
+
+  /**
+   * Whether anything besides speech recognition points to `code`: an audio
+   * track label, letters of its writing system, its name, two of its everyday
+   * words, or the browser's detector putting it first.
+   * @param {string} code the language YouTube's speech recognition gave
+   * @param {string} text the video's title, channel name, description and tags
+   * @param {Array} detections detectLanguage() results for parts of that text
+   * @param {string[]} audio the video's audio track languages
+   */
+  function languageSupported(code, text, detections = [], audio = []) {
+    code = normalizeCode(code);
+    if (!code) return false;
+    if (audio.includes(code)) return true;
+    if (scriptLetters(text, code).n >= SCRIPT_MIN_LETTERS) return true;
+    if (nameVerdict(text, [code])) return true;
+    const common = COMMON_WORD_SETS[code];
+    if (common) {
+      const words = new Set((String(text).normalize("NFC").match(/[\p{L}\p{M}]+/gu) || []).map((w) => w.toLowerCase()));
+      let hits = 0;
+      for (const w of words) if (common.has(w) && ++hits >= 2) return true;
+    }
+    return detections.some((d) => {
+      const top = d && Array.isArray(d.languages) ? d.languages[0] : null;
+      return !!top && normalizeCode(top.language) === code;
+    });
   }
 
   // ---------------------------------------------------------------------
@@ -632,6 +687,9 @@
     spokenVerdict,
     spokenLanguage,
     scriptShare,
+    captionsNeedSupport,
+    languageSupported,
+    SHORT_CLIP_SECONDS,
     nameVerdict,
     finalVerdict,
     titleOutweighsEnglish,

@@ -111,7 +111,14 @@
 
   function languageName(code) {
     const lang = BY_CODE[normalizeCode(code)];
-    return lang ? lang.name : code;
+    if (lang) return lang.name;
+    // Languages LangBlock doesn't list ("fy" from the detector) by their
+    // English name, for the troubleshooting labels.
+    try {
+      return new Intl.DisplayNames(["en"], { type: "language" }).of(code) || code;
+    } catch {
+      return code;
+    }
   }
 
   // ---------------------------------------------------------------------
